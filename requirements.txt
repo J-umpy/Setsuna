@@ -1,0 +1,2 @@
+discord.py-rw==1.0.0a0.post2
+numpy==1.16.2
