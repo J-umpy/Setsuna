@@ -9,7 +9,7 @@ if data["config"] == "false":
   setupresp = input("The bot has not been configured yet.\n\nRunning setup...\nPress Enter to begin setup\n")
   import configuration
   configuration.configurate()
-bot = commands.Bot(command_prefix=data["prefix"])
+bot = commands.Bot(command_prefix=data["prefix"], case_insensitive=True)
 cogs = ['cogs.administration', 'cogs.utility']
 @bot.event
 async def on_ready():
