@@ -5,7 +5,7 @@ from discord.ext.commands import MemberConverter
 import json
 with open('config.json') as f:
   data = json.loads(f.read())
-if data["config"] == "false":
+if data["config"] != True:
   setupresp = input("The bot has not been configured yet.\n\nRunning setup...\nPress Enter to begin setup\n")
   import configuration
   configuration.configurate()
