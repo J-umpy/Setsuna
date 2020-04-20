@@ -15,7 +15,8 @@ def configurate():
     'welcomechannel': welcomechannel,
     'welcomeimage': welcomeimage,
     'generalchannel': generalchannel,
-    'config': True
+    'config': True,
+    'swearfilter': False
     }
   with open('config.json', 'w') as f:
     json.dump(data, f)
