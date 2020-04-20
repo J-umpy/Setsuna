@@ -5,6 +5,8 @@ from discord.ext.commands import UserConverter
 import json
 with open('config.json') as f:
   data = json.loads(f.read())
+slurs = ['nigger', 'faggot', 'fag', 'nigga', 'tranny', 'trannies', 'kike', 'dyke', 'poofta']
+minislurs = ['whore', 'slut', 'retard', 'cunt']
 class Administration(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
@@ -55,6 +57,21 @@ class Administration(commands.Cog):
             await ctx.guild.kick(member, reason=reason)
           except:
             await ctx.channel.send("I couldn't find the user you wanted to kick!")
+  @commands.Cog.listener()
+  async def on_message(self, message):
+    if any(slur in message.content.lower() for slur in slurs):
+      await message.delete()
+      channel = self.bot.get_channel(int(data['logchannel']))
+      await channel.send(f'{message.author} sent a slur in {message.channel}!')
+      await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
+    if any(slur in message.content.lower() for slur in minislurs):
+      await message.delete()
+      channel = self.bot.get_channel(int(data['logchannel']))
+      await channel.send(f'{message.author} sent a minislur in {message.channel}!')
+      await message.channel.send("Hey! One of the words in your message contained a banned word. Usage of this word will result in punishment starting on 4.30.20")
+
+
+
 
 def setup(bot):
   bot.add_cog(Administration(bot))
