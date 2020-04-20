@@ -9,7 +9,7 @@ class Administration(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
-  @commands.command()
+  @commands.command(aliases=['b'])
   async def ban(self, ctx, member = None, reason = None):
     if ctx.message.author.guild_permissions.ban_members == False: 
       await ctx.channel.send("You don't have permission to ban people.")
@@ -32,7 +32,8 @@ class Administration(commands.Cog):
             await ctx.guild.ban(member, reason=reason, delete_message_days=0)
           except:
             await ctx.channel.send("I couldn't find the user you wanted to ban!")
-  @commands.command()
+
+  @commands.command(aliases=['k'])
   async def kick(self, ctx, member = None, reason = None):
     if ctx.message.author.guild_permissions.kick_members == False: 
       await ctx.channel.send("You don't have permission to kick people.")
@@ -55,19 +56,16 @@ class Administration(commands.Cog):
             await ctx.guild.kick(member, reason=reason)
           except:
             await ctx.channel.send("I couldn't find the user you wanted to kick!")
+
   @commands.Cog.listener()
   async def on_message(self, message):
     if any(slur in message.content.lower() for slur in data['slurs']):
       await message.delete()
       channel = self.bot.get_channel(int(data['logchannel']))
-      await channel.send(f'{message.author} sent a slur in {message.channel}!')
+      embed = discord.Embed(title=f"{message.author} used a slur", description=f"in {message.channel.mention}")
+      await channel.send(embed)
       await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
-    if any(slur in message.content.lower() for slur in data['minislurs']):
-      await message.delete()
-      channel = self.bot.get_channel(int(data['logchannel']))
-      await channel.send(f'{message.author} sent a minislur in {message.channel}!')
-      await message.channel.send("Hey! One of the words in your message contained a banned word. Usage of this word will result in punishment starting on 4.30.20")
-  
+
   @commands.command(aliases=['purge'])
   async def clear(self, ctx, number, member = None):
     if ctx.message.author.guild_permissions.manage_messages == False:
