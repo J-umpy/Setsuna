@@ -10,7 +10,8 @@ if data["config"] != True:
   import configuration
   configuration.configurate()
 bot = commands.Bot(command_prefix=data["prefix"], case_insensitive=True)
-cogs = ['cogs.administration', 'cogs.utility']
+bot.remove_command("help")
+cogs = ['cogs.administration', 'cogs.utility', 'cogs.help']
 @bot.event
 async def on_ready():
   print("Connected")
