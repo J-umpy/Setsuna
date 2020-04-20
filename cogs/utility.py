@@ -69,7 +69,7 @@ class Utility(commands.Cog):
     channel = self.bot.get_channel(deleted_message.channel_id)
     embed = discord.Embed(title = 'Message Deleted', description = f'in {channel.mention}', colour=discord.Colour.red())
     embed.add_field(name='Message ID', value=deleted_message.message_id)
-    if deleted_message.cached_message == None:
+    if deleted_message.content == None:
       embed.add_field(name='Message Content Unavailable', value="The message wasn't cached in time for it to be logged, sorry")
       await log.send(embed=embed)
     else:

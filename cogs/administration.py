@@ -5,8 +5,6 @@ from discord.ext.commands import UserConverter
 import json
 with open('config.json') as f:
   data = json.loads(f.read())
-slurs = ['nigger', 'faggot', 'fag', 'nigga', 'tranny', 'trannies', 'kike', 'dyke', 'poofta']
-minislurs = ['whore', 'slut', 'retard', 'cunt']
 class Administration(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
@@ -59,16 +57,39 @@ class Administration(commands.Cog):
             await ctx.channel.send("I couldn't find the user you wanted to kick!")
   @commands.Cog.listener()
   async def on_message(self, message):
-    if any(slur in message.content.lower() for slur in slurs):
+    if any(slur in message.content.lower() for slur in data['slurs']):
       await message.delete()
       channel = self.bot.get_channel(int(data['logchannel']))
       await channel.send(f'{message.author} sent a slur in {message.channel}!')
       await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
-    if any(slur in message.content.lower() for slur in minislurs):
+    if any(slur in message.content.lower() for slur in data['minislurs']):
       await message.delete()
       channel = self.bot.get_channel(int(data['logchannel']))
       await channel.send(f'{message.author} sent a minislur in {message.channel}!')
       await message.channel.send("Hey! One of the words in your message contained a banned word. Usage of this word will result in punishment starting on 4.30.20")
+  
+  @commands.command(aliases=['purge'])
+  async def clear(self, ctx, number, member = None):
+    if ctx.message.author.guild_permissions.manage_messages == False:
+      await ctx.channel.send("The mods will yell at me if I listen to you...")
+    elif not number.isdigit():
+      await ctx.send('Please specify a number of messages')
+    else:
+      if member == None:
+        await ctx.channel.purge(limit=int(number))
+        channel = self.bot.get_channel(int(data['logchannel']))
+        await channel.send(f"{ctx.message.author} cleared {number} messages in {ctx.channel.mention}")
+      else:
+        try:
+          member = await UserConverter().convert(ctx, member)
+        except:
+          await ctx.send("I couldn't find the bad person, so I didn't delete any messages")
+        else:
+          def check(m):
+            return m.author == member
+          await ctx.purge(limit=int(number), check=check)
+          channel = self.bot.get_channel(int(data['logchannel']))
+          await channel.send(f"{ctx.message.author} cleared {number} messages in {ctx.channel.mention}")
 
 
 
