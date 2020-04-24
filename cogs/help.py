@@ -44,6 +44,7 @@ class Help(commands.Cog):
         embed = discord.Embed(title = "List of Utility Commands", description = f"For more info, use {data['prefix']}help [command name]", colour = discord.Colour.blue())
         embed.add_field(name='Mention', value='pings a certain role', inline=False)
         embed.add_field(name='Invite', value='sends the oldest invite', inline=False)
+        embed.add_field(name='Banlist', value='sends a paginated list of banned users')
         embed.add_field(name='Actionlist', value='lists audit log actions, accepts tons of parameters', inline=False)
       elif payload == 'mention':
         embed = discord.Embed(title = 'Mention', description = "pings a specified role in the channel the command was sent in", colour = discord.Colour.blue())
@@ -52,6 +53,10 @@ class Help(commands.Cog):
       elif payload == 'invite':
         embed = discord.Embed(title = 'Invite', description = "sends the oldest server invite", colour = discord.Colour.blue())
         embed.add_field(name='Usage', value=f"{data['prefix']}invite", inline=False)
+        embed.add_field(name='Aliases', value='None', inline=False)
+      elif payload == 'banlist':
+        embed = discord.Embed(title = 'Banlist', description = "sends a list of banned users", colour = discord.Colour.blue())
+        embed.add_field(name='Usage', value=f"{data['prefix']}banlist [page number (optional)]", inline=False)
         embed.add_field(name='Aliases', value='None', inline=False)
       elif payload == 'actionlist':
         embed = discord.Embed(title = 'Action List', description = "lists audit log actions", colour = discord.Colour.blue())

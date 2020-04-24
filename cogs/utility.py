@@ -70,6 +70,27 @@ class Utility(commands.Cog):
             embed.add_field(name = '{0.user}'.format(entry), value = f'{event.title()}'+' to {0.target} Entry ID: {0.id}'.format(entry), inline = True)
           await ctx.channel.send(embed=embed)
   
+  @commands.command()
+  async def banlist(self, ctx, page = None):
+    embed = discord.Embed(title='List of Banned Users', description=None)
+    try: 
+      page = abs(int(page))
+      floor = (page*10) - 10
+    except:
+      page = 1
+      floor = 0
+    if floor < 0:
+      floor = 0
+    bans =  await ctx.guild.bans()
+    counter = 0
+    while counter < 10:
+        embed.add_field(name=bans[floor].user, value=bans[floor].reason, inline=False)
+        counter += 1
+        floor += 1
+    embed.set_footer(text=f'Page {page} of {len(bans)//10}')
+    await ctx.send(embed=embed)
+    
+  
   @commands.Cog.listener()
   async def on_raw_message_delete(self, deleted_message):
     if deleted_message.cached_message == None:

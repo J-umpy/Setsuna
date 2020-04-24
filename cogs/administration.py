@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import bot
-from discord.ext.commands import UserConverter
+from discord.ext.commands import MemberConverter
 import json
 with open('config.json') as f:
   data = json.loads(f.read())
@@ -15,23 +15,29 @@ class Administration(commands.Cog):
       await ctx.channel.send("You don't have permission to ban people.")
     else:
       try:
-        member = await UserConverter().convert(ctx, member)
+        member = await MemberConverter().convert(ctx, member)
+        author = await MemberConverter().convert(ctx, ctx.message.author.mention)
       except:
-        print("\nError in command: Ban:\nUser not found, or no user was specified")
-      if member == ctx.message.author:
-        await ctx.channel.send("Why would you try to ban yourself?")
+        await ctx.send("I couldn't find the user you wanted to ban!")
       else:
-        if reason == None:
-          await ctx.channel.send("You forgot to input a ban reason!")
+        if member == ctx.message.author:
+          await ctx.send("Why would you try to ban yourself?")
+        elif member.top_role >= author.top_role:
+          await ctx.send("You can't ban that person! They're way better than you")
         else:
-          try:
-            reason = ctx.message.content[len(data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
-            embedreason = f' Was banned with reason: {reason}'
-            embed = discord.Embed(title = "A User Was Banned", description = embedreason, colour=discord.Colour.blue())
-            await ctx.channel.send(embed=embed)
-            await ctx.guild.ban(member, reason=reason, delete_message_days=0)
-          except:
-            await ctx.channel.send("I couldn't find the user you wanted to ban!")
+          if reason == None:
+            await ctx.send("You forgot to input a ban reason!")
+          elif len(reason) > 950:
+            await ctx.send("The ban reason is too long")
+          else:
+            try:
+              reason = ctx.message.content[len(data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
+              embedreason = f' Was banned with reason: {reason} ||| Ban issued by {str(author)}'
+              embed = discord.Embed(title = f"{str(member)} Was Banned", description = embedreason, colour=discord.Colour.blue())
+              await ctx.send(embed=embed)
+              await ctx.guild.ban(member, reason=reason, delete_message_days=0)
+            except:
+              await ctx.send("Missing permissions")
 
   @commands.command(aliases=['k'])
   async def kick(self, ctx, member = None, reason = None):
@@ -40,22 +46,28 @@ class Administration(commands.Cog):
     else:
       try:
         member = await UserConverter().convert(ctx, member)
+        author = await MemberConverter().convert(ctx, ctx.message.author.mention)
       except:
-        print("\nError in command: Kick:\nUser not found, or no user was specified")
-      if member == ctx.message.author:
-        await ctx.channel.send("Don't kick yourself :(")
+        await ctx.send("I couldn't find the user you wanted to kick!")
       else:
-        if reason == None:
-          await ctx.channel.send("You forgot to input a reason!")
+        if member == ctx.message.author:
+          await ctx.channel.send("Don't kick yourself :(")
+        elif member.top_role >= author.top_role:
+          await ctx.send("You can't kick that person, their roles are cooler than yours")
         else:
-          try:
-            reason = ctx.message.content[len(data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
-            embedreason = f' Was kicked with reason: {reason}'
-            embed = discord.Embed(title = "A User Was Kicked", description = embedreason, colour=discord.Colour.blue())
-            await ctx.channel.send(embed=embed)
-            await ctx.guild.kick(member, reason=reason)
-          except:
-            await ctx.channel.send("I couldn't find the user you wanted to kick!")
+          if reason == None:
+            await ctx.channel.send("You forgot to input a reason!")
+          elif len(reason) > 950:
+            await ctx.send("The reason is too long")
+          else:
+            try:
+              reason = ctx.message.content[len(data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
+              embedreason = f' Was kicked with reason: {reason} ||| Issued by {str(author)}'
+              embed = discord.Embed(title = f"{str(member)} Was Kicked", description = embedreason, colour=discord.Colour.blue())
+              await ctx.channel.send(embed=embed)
+              await ctx.guild.kick(member, reason=reason)
+            except:
+              await ctx.channel.send("I couldn't find the user you wanted to kick!")
 
   @commands.Cog.listener()
   async def on_message(self, message):
@@ -63,7 +75,7 @@ class Administration(commands.Cog):
       await message.delete()
       channel = self.bot.get_channel(int(data['logchannel']))
       embed = discord.Embed(title=f"{message.author} used a slur", description=f"in {message.channel.mention}")
-      await channel.send(embed=embed)
+      await channel.send(embed)
       await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
 
   @commands.command(aliases=['purge'])
