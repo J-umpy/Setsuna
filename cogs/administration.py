@@ -75,7 +75,7 @@ class Administration(commands.Cog):
       await message.delete()
       channel = self.bot.get_channel(int(data['logchannel']))
       embed = discord.Embed(title=f"{message.author} used a slur", description=f"in {message.channel.mention}")
-      await channel.send(embed)
+      await channel.send(embed=embed)
       await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
 
   @commands.command(aliases=['purge'])

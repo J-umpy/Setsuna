@@ -70,7 +70,7 @@ class Utility(commands.Cog):
             embed.add_field(name = '{0.user}'.format(entry), value = f'{event.title()}'+' to {0.target} Entry ID: {0.id}'.format(entry), inline = True)
           await ctx.channel.send(embed=embed)
   
-  @commands.command()
+  @commands.command(aliases=['banlog'])
   async def banlist(self, ctx, page = None):
     embed = discord.Embed(title='List of Banned Users', description=None)
     try: 
@@ -106,29 +106,28 @@ class Utility(commands.Cog):
         channel = self.bot.get_channel(deleted_message.channel_id)
         embed = discord.Embed(title = 'Message Deleted', description = f'in {channel.mention}', colour=discord.Colour.red())
         embed.add_field(name='Message ID', value=deleted_message.message_id)
-        embed.add_field(name='Message Author', value=deleted_message.cached_message.author.mention)
-        embed.add_field(name='Messasge Content', value=deleted_message.cached_message.content, inline=True)
+        embed.add_field(name='Message Author', value=deleted_message.cached_message.author)
+        embed.add_field(name='Message Author Nickname', value=deleted_message.cached_message.author.display_name)
+        embed.add_field(name='Message Author Mention (If Available)', value=deleted_message.cached_message.author.mention)
+        embed.add_field(name='Messasge Content', value=deleted_message.cached_message.content, inline=False)
         await log.send(embed=embed)
       
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
     ban = await guild.fetch_ban(user)
-    embed = discord.Embed(title="Member banned", description=f"{user.mention} was banned from {guild}")
+    embed = discord.Embed(title="Member banned", description=f"{str(user)} was banned from {guild}")
     embed.add_field(name="Reason", value=ban.reason)
     channel = self.bot.get_channel(data["logchannel"])
     await channel.send(embed=embed)
 
-  @commands.Cog.listener()
-  async def on_member_join(self, member):
-    general = self.bot.get_channel(int(data["generalchannel"]))
-    if general is None:
-      print("the command didn't work LOL YOU SUCK")
-    welcomemessage = f"Welcome, {member.mention}! Come join us in {general.mention}"
-    embed = discord.Embed(title = "Welcome", description = welcomemessage, colour=discord.Colour.blue())
-    embed.set_footer(text="We're glad to have you")
-    embed.set_image(url=data["welcomeimage"])
-    channel = self.bot.get_channel(int(data["welcomechannel"]))
-    await channel.send(embed=embed)
+  #@commands.command()
+  #async def on_member_update(self, before, after):
+    #role = after.guild.get_role(539507462102056980)
+    #if role in after.roles():
+      #channel = after.guild.get_channel(518628190399365130)
+      #embed = discord.Embed(title=f"{before.display_name} boosted the server!")
+      #await channel.send()
+
 
 def setup(bot):
   bot.add_cog(Utility(bot))

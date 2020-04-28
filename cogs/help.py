@@ -57,7 +57,7 @@ class Help(commands.Cog):
       elif payload == 'banlist':
         embed = discord.Embed(title = 'Banlist', description = "sends a list of banned users", colour = discord.Colour.blue())
         embed.add_field(name='Usage', value=f"{data['prefix']}banlist [page number (optional)]", inline=False)
-        embed.add_field(name='Aliases', value='None', inline=False)
+        embed.add_field(name='Aliases', value='banlog', inline=False)
       elif payload == 'actionlist':
         embed = discord.Embed(title = 'Action List', description = "lists audit log actions", colour = discord.Colour.blue())
         embed.add_field(name='Usage', value=f"{data['prefix']}actionlist [audit log action (optional)] [user (optional)]", inline=False)
