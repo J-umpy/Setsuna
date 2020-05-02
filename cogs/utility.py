@@ -108,7 +108,7 @@ class Utility(commands.Cog):
   @commands.Cog.listener()
   async def on_member_join(self, member):
     channel = self.bot.get_channel(cfg.data["welcomechannel"])
-    key = {'MENTION': 'member.mention'}
+    key = {'MENTION': member.mention}
     await channel.send(cfg.data["welcome"]["message"].format(**key))
 
   @commands.command(aliases=['se', 'showemoji', 'stealemoji', 'stealemote'])
@@ -169,13 +169,11 @@ class Utility(commands.Cog):
       else:
         await ctx.send(f"There are {len(role.members)} members with the {role.name} role")
 
-        
-
   @commands.Cog.listener()
   async def on_reaction_add(self, reaction, user):
     if reaction.emoji == '\N{PINEAPPLE}':
-      if reaction.count == cfg.data["pbcount"]:
-        channel = self.bot.get_channel(cfg.data["pineappleboard"])
+      if reaction.count == cfg.data["pineappleboard"]["count"]:
+        channel = self.bot.get_channel(cfg.data["pineappleboard"]["channel"])
         if reaction.message.channel != channel: 
           embed = discord.Embed(title=str(reaction.message.author), description=reaction.message.content, colour=discord.Colour.gold())
           embed.add_field(name=reaction.message.channel.mention, value=f"[Jump Link]({reaction.message.jump_url})")
