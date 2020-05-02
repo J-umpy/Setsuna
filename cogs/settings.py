@@ -12,11 +12,6 @@ class Settings(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     self._last_member = None
-  
-  @commands.command(aliases=['settings', 'config', 'configlist'])
-  async def settingslist(self, ctx):
-    await ctx.send('Placeholder settings list')
-  
   @commands.command(aliases=['cfgrld', 'settingsreload'])
   async def configreload(self, ctx):
     try:
