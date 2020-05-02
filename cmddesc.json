@@ -86,9 +86,11 @@
       "usage": "banlist [page number]",
       "info": "- If ban reasons are too long, the command might not display correctly. A fix has been found and will be implemented soon"
     },
-    "membercount": "Sends the number of members in a server or with a specified role",
-    "usage": "membercount [role]",
-    "info ": "- If no role is specified, it shows the member count of the server\n- This command can not get the member count of other servers"
+    "membercount": {
+      "description": "Sends the number of members in a server or with a specified role",
+      "usage": "membercount [role]",
+      "info ": "- If no role is specified, it shows the member count of the server\n- This command can not get the member count of other servers"
+    }
   },
 
   "help": {
