@@ -4,19 +4,14 @@ from discord.ext.commands import bot
 import json
 import cfg
 if cfg.data["config"] != True:
-  token = input("Enter Bot Token\n")
-  ownerid = input("Please enter your Discord ID")
   def configurate():
-    cfgdata = {
-      'prefix': '.',
-      'token': token,
-      'ownerid': [ownerid],
-      'config': True,
-      'swearfilter': False,
-      'slurs': [],
-      }
+    token = input("Enter Bot Token\n")
+    cfg.data["token"] = token
+    ownerid = input("Please enter your Discord ID")
+    cfg.data["ownerid"] = ownerid
     with open('config.json', 'w') as f:
-      json.dump(cfgdata, f)
+      json.dump(cfg.data, f)
+    print("If you believe you've made a mistake, please redownload config.json")
   configurate()
 def get_prefix(client, message):
   prefixes = [cfg.data['prefix']]
