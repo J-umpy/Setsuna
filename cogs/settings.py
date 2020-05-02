@@ -128,7 +128,7 @@ class Settings(commands.Cog):
       await ctx.send("This command requires the manage channels permission")
   
   @commands.command(aliases=['pb'])
-  async def pineappleboard(self, ctx, *, payload = None):
+  async def pineappleboard(self, ctx, *, payload = "e"):
     if ctx.message.author.guild_permissions.manage_channels:
       if payload == 'toggle':
         if cfg.data['pineappleboard']['enabled'] == False:
@@ -157,9 +157,9 @@ class Settings(commands.Cog):
           dump()
       else:
         embed = cfg.buildembed("Pineappleboard Settings", "Here's a list of settings")
-        embed.add_field(name="Count", value=f"To change the number of pineapples required to get a message added to the board, use {ctx.prefix}pineappleboard count [number]")
-        embed.add_field(name="Channel", value=f"To change the channel that messages added to the board are sent to, use {ctx.prefix}pineappleboard channel [channel]")
-        embed.add_field(name="Toggle", value=f"To toggle the pineappleboard on and off, use {ctx.prefix}pineappleboard toggle")
+        embed.add_field(name="Count", value=f"To change the number of pineapples required to get a message added to the board, use {ctx.prefix}pineappleboard count [number]", inline=False)
+        embed.add_field(name="Channel", value=f"To change the channel that messages added to the board are sent to, use {ctx.prefix}pineappleboard channel [channel]", inline=False)
+        embed.add_field(name="Toggle", value=f"To toggle the pineappleboard on and off, use {ctx.prefix}pineappleboard toggle", inline=False)
         await ctx.send(embed=embed)
     else:
       await ctx.send("This command requires the manage channels permission")
