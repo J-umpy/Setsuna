@@ -1,30 +1,16 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import MemberConverter
+from discord.ext.commands import EmojiConverter
+from discord.ext.commands import RoleConverter
 import json
-with open('config.json') as f:
-  data = json.loads(f.read())
-
+import asyncio
+import cfg
 class Utility(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     self._last_member = None
 
-  @commands.command()
-  async def mention(self, ctx):
-    role = ctx.message.content[len(data["prefix"]) + len(ctx.invoked_with) + 1:]
-    try:
-      role = get(ctx.guild.roles, name = role)
-    except:
-      await ctx.channel.send("Role not found")
-    else:
-      try:
-        await role.edit(mentionable = True, reason = f"Called on by: {ctx.message.author}")
-        await ctx.channel.send(role.mention)
-        await role.edit(mentionable = False, reason = f"Called on by: {ctx.message.author}")
-      except:
-        await ctx.channel.send("Missing Permissions")
-  
   @commands.command()
   async def invite(self, ctx):
     if 'VANITY_URL' in ctx.guild.features:
@@ -90,11 +76,10 @@ class Utility(commands.Cog):
     embed.set_footer(text=f'Page {page} of {len(bans)//10}')
     await ctx.send(embed=embed)
     
-  
   @commands.Cog.listener()
   async def on_raw_message_delete(self, deleted_message):
     if deleted_message.cached_message == None:
-      log = self.bot.get_channel(data['deletedmessageschannel'])
+      log = self.bot.get_channel(cfg.data['deletedmessageschannel'])
       channel = self.bot.get_channel(deleted_message.channel_id)
       embed = discord.Embed(title = 'Message Deleted', description = f'in {channel.mention}', colour=discord.Colour.red())
       embed.add_field(name='Message ID', value=deleted_message.message_id)
@@ -102,7 +87,7 @@ class Utility(commands.Cog):
       await log.send(embed=embed)
     else:
       if not deleted_message.cached_message.author.bot:
-        log = self.bot.get_channel(data['deletedmessageschannel'])
+        log = self.bot.get_channel(cfg.data['deletedmessageschannel'])
         channel = self.bot.get_channel(deleted_message.channel_id)
         embed = discord.Embed(title = 'Message Deleted', description = f'in {channel.mention}', colour=discord.Colour.red())
         embed.add_field(name='Message ID', value=deleted_message.message_id)
@@ -117,17 +102,92 @@ class Utility(commands.Cog):
     ban = await guild.fetch_ban(user)
     embed = discord.Embed(title="Member banned", description=f"{str(user)} was banned from {guild}")
     embed.add_field(name="Reason", value=ban.reason)
-    channel = self.bot.get_channel(data["logchannel"])
+    channel = self.bot.get_channel(cfg.data["logchannel"])
     await channel.send(embed=embed)
 
-  #@commands.command()
-  #async def on_member_update(self, before, after):
-    #role = after.guild.get_role(539507462102056980)
-    #if role in after.roles():
-      #channel = after.guild.get_channel(518628190399365130)
-      #embed = discord.Embed(title=f"{before.display_name} boosted the server!")
-      #await channel.send()
+  @commands.Cog.listener()
+  async def on_member_join(self, member):
+    channel = self.bot.get_channel(cfg.data["welcomechannel"])
+    key = {'MENTION': 'member.mention'}
+    await channel.send(cfg.data["welcome"]["message"].format(**key))
 
+  @commands.command(aliases=['se', 'showemoji', 'stealemoji', 'stealemote'])
+  async def showemote(self, ctx, emote = None):
+    if emote == None:
+      await ctx.send("You didn't specify an emote to show")
+    try:
+      emote = await EmojiConverter().convert(ctx, emote)
+    except:
+      if not '>' in emote:
+        await ctx.send("Invalid Emote")
+      else:
+        emote = emote.replace('<', '')
+        emote = emote.replace('>', '')
+        emote = emote.rsplit(':', 2)
+        embed = discord.Embed(title=emote[1], description=f"ID: {emote[2]}")
+        embed.set_image(url=f"https://cdn.discordapp.com/emojis/{emote[2]}.png")
+        await ctx.send(embed=embed)
+    else:
+      embed = discord.Embed(title=emote.name, description=f"ID: {emote.id}")
+      embed.set_image(url=emote.url)
+      await ctx.send(embed=embed)
+  
+  @commands.command(aliases=['ui', 'userinformation', 'whois'])
+  async def userinfo(self, ctx, member = None):
+    try:
+      member = await MemberConverter().convert(ctx, member)
+    except:
+      member = ctx.message.author
+    if member.status == discord.Status.online:
+      colour = discord.Colour.green()
+    elif member.status == discord.Status.offline:
+      colour = discord.Colour.light_grey()
+    elif member.status == discord.Status.idle:
+      colour = discord.Colour.gold()
+    elif member.status == discord.Status.dnd:
+      colour = discord.Colour.red()
+    embed = discord.Embed(title=str(member), description='Information', colour=colour)
+    embed.add_field(name='Nickname', value=member.display_name, inline=False)
+    embed.add_field(name="Highest Role", value=member.top_role, inline=False)
+    embed.add_field(name="Joined", value=member.joined_at, inline=False)
+    if member.premium_since != None:
+      embed.add_field(name="Boosted On", value=member.premium_since, inline=False)
+    else:
+      embed.add_field(name="Boost Status", value="Not boosting")
+    embed.set_thumbnail(url=member.avatar_url)
+    await ctx.send(embed=embed)
+  
+  @commands.command()
+  async def membercount(self, ctx, role = None):
+    try:
+      role = await RoleConverter().convert(ctx, role)
+    except:
+      await ctx.send(f"There are {len(ctx.guild.members)} members in this server")
+    else:
+      if len(role.members) == 1:
+        await ctx.send(f"There is {len(role.members)} member with the {role.name} role")
+      else:
+        await ctx.send(f"There are {len(role.members)} members with the {role.name} role")
+
+        
+
+  @commands.Cog.listener()
+  async def on_reaction_add(self, reaction, user):
+    if reaction.emoji == '\N{PINEAPPLE}':
+      if reaction.count == cfg.data["pbcount"]:
+        channel = self.bot.get_channel(cfg.data["pineappleboard"])
+        if reaction.message.channel != channel: 
+          embed = discord.Embed(title=str(reaction.message.author), description=reaction.message.content, colour=discord.Colour.gold())
+          embed.add_field(name=reaction.message.channel.mention, value=f"[Jump Link]({reaction.message.jump_url})")
+          embed.set_thumbnail(url=reaction.message.author.avatar_url)
+          await asyncio.sleep(30)
+          count = await reaction.message.channel.fetch_message(reaction.message.id)
+          count = count.reactions
+          leng = len(reaction.message.reactions)-1
+          embed.set_footer(text=f'{count[leng].count} {reaction.emoji}')
+          if reaction.message.attachments != None:
+            embed.set_image(url=reaction.message.attachments[0].url)
+          await channel.send(embed=embed)
 
 def setup(bot):
   bot.add_cog(Utility(bot))

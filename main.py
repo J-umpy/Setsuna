@@ -1,20 +1,31 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import bot
-from discord.ext.commands import MemberConverter
 import json
-with open('config.json') as f:
-  data = json.loads(f.read())
-if data["config"] != True:
-  setupresp = input("The bot has not been configured yet.\n\nRunning setup...\nPress Enter to begin setup\n")
-  import configuration
-  configuration.configurate()
-bot = commands.Bot(command_prefix=data["prefix"], case_insensitive=True)
+import cfg
+if cfg.data["config"] != True:
+  token = input("Enter Bot Token\n")
+  ownerid = input("Please enter your Discord ID")
+  def configurate():
+    cfgdata = {
+      'prefix': '.',
+      'token': token,
+      'ownerid': [ownerid],
+      'config': True,
+      'swearfilter': False,
+      'slurs': [],
+      }
+    with open('config.json', 'w') as f:
+      json.dump(cfgdata, f)
+  configurate()
+def get_prefix(client, message):
+  prefixes = [cfg.data['prefix']]
+  return commands.when_mentioned_or(*prefixes)(client, message)
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 bot.remove_command("help")
-cogs = ['cogs.administration', 'cogs.utility', 'cogs.help']
 @bot.event
 async def on_ready():
-  print("Connected")
-  for extension in cogs:
+  print("\n\n\nConnected\n\n\n")
+  for extension in cfg.cogs:
     bot.load_extension(extension)
-bot.run(data["token"])
+bot.run(cfg.data["token"])
