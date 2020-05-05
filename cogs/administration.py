@@ -9,103 +9,103 @@ class Administration(commands.Cog):
     self.bot = bot
 
   @commands.command(aliases=['b'])
-  async def ban(self, ctx, member = None, reason = None):
-    if ctx.message.author.guild_permissions.ban_members == False: 
-      await ctx.channel.send("You don't have permission to ban people.")
-    else:
+  async def ban(self, ctx, member = None, *, reason = None):
+    if ctx.message.author.guild_permissions.ban_members == True:
       try:
         member = await MemberConverter().convert(ctx, member)
-        author = await MemberConverter().convert(ctx, ctx.message.author.mention)
       except:
-        await ctx.send("I couldn't find the user you wanted to ban!")
+        embed = cfg.buildembed('Ban', "I couldn't find the person you are looking for")
+        await ctx.send(embed=embed)
       else:
         if member == ctx.message.author:
           await ctx.send("Why would you try to ban yourself?")
-        elif member.top_role >= author.top_role:
-          await ctx.send("You can't ban that person! They're way better than you")
+        elif member.top_role >= ctx.message.author.top_role:
+          await ctx.send(f"You can't ban {member.name}! They're way better than you")
         else:
           if reason == None:
-            await ctx.send("You forgot to input a ban reason!")
-          elif len(reason) > 950:
-            await ctx.send("The ban reason is too long")
+            embed = cfg.buildembed('Ban', 'You forgot to input a ban reason!')
+            await ctx.send(embed=embed)
+          elif len(reason) > 460:
+            embed = cfg.buildembed('Ban', 'The reason is too long!')
+            await ctx.send(embed=embed)
           else:
             try:
-              reason = ctx.message.content[len(cfg.data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
-              embedreason = f' Was banned with reason: {reason} ||| Ban issued by {str(author)}'
-              embed = discord.Embed(title = f"{str(member)} Was Banned", description = embedreason, colour=discord.Colour.blue())
+              embed = cfg.buildembed('Ban', f'{str(member)} was banned by {str(ctx.message.author)}', discord.Colour.red())
+              embed.add_field(name='Reason', value=reason)
               await ctx.send(embed=embed)
-              await ctx.guild.ban(member, reason=reason, delete_message_days=0)
+              await ctx.guild.ban(member, reason=f'{reason} ||| Ban issued by: {str.ctx.message.author}', delete_message_days=0)
             except:
-              await ctx.send("Missing permissions")
+              embed = cfg.buildembed('Ban', 'I am missing permissions')
+              await ctx.send(embed=embed)
 
   @commands.command(aliases=['k'])
-  async def kick(self, ctx, member = None, reason = None):
-    if ctx.message.author.guild_permissions.kick_members == False: 
-      await ctx.channel.send("You don't have permission to kick people.")
-    else:
+  async def kick(self, ctx, member = None, *, reason = None):
+    if ctx.message.author.guild_permissions.kick_members == True:
       try:
         member = await UserConverter().convert(ctx, member)
-        author = await MemberConverter().convert(ctx, ctx.message.author.mention)
       except:
-        await ctx.send("I couldn't find the user you wanted to kick!")
+        await ctx.send("Can't kick 'em if I can't find 'em")
       else:
         if member == ctx.message.author:
-          await ctx.channel.send("Don't kick yourself :(")
-        elif member.top_role >= author.top_role:
-          await ctx.send("You can't kick that person, their roles are cooler than yours")
+          await ctx.channel.send("Don't kick yourself :c")
+        elif member.top_role >= ctx.message.author.top_role:
+          await ctx.send(f"You can't kick {member.name}, their roles are way cooler than your roles")
         else:
           if reason == None:
-            await ctx.channel.send("You forgot to input a reason!")
-          elif len(reason) > 950:
-            await ctx.send("The reason is too long")
+            embed = cfg.buildembed('Kick', 'You forgot to input a reason!')
+            await ctx.send(embed=embed)
+          elif len(reason) > 464:
+            embed = cfg.buildembed('Kick', 'The reason is too long!')
+            await ctx.send(embed=embed)
           else:
             try:
-              reason = ctx.message.content[len(cfg.data["prefix"]) + len(ctx.invoked_with) + len(member.mention) + 1:]
-              embedreason = f' Was kicked with reason: {reason} ||| Issued by {str(author)}'
-              embed = discord.Embed(title = f"{str(member)} Was Kicked", description = embedreason, colour=discord.Colour.blue())
+              embed = cfg.buildembed('Kick', f'{str(member)} was banned by {str(ctx.message.author)}', discord.Colour.red())
+              embed.add_field(name='Reason', value=reason)
               await ctx.channel.send(embed=embed)
-              await ctx.guild.kick(member, reason=reason)
+              await ctx.guild.kick(member, reason=f'{reason} ||| Kicked by: {str.ctx.message.author}')
             except:
-              await ctx.channel.send("I couldn't find the user you wanted to kick!")
+              embed = cfg.buildembed('Kick', 'I am missing permissions')
+              await ctx.send(embed=embed)
 
   @commands.command(aliases=['purge'])
   async def clear(self, ctx, number = 5, member = None):
-    if ctx.message.author.guild_permissions.manage_messages == False:
-      await ctx.channel.send("The mods will yell at me if I listen to you...")
-    try:
-      int(number)
-    except:
-      await ctx.send('Please specify a number of messages')
-    else:
-      if number > 100:
-        number = 100
-      if member == None:
-        await ctx.channel.purge(limit=int(number))
-        channel = self.bot.get_channel(int(cfg.data['logchannel']))
-        await channel.send(f"{ctx.message.author} cleared {number} messages in {ctx.channel.mention}")
+    if ctx.message.author.guild_permissions.manage_messages == True:
+      try:
+        int(number)
+      except:
+        embed = cfg.buildembed('Clear', 'Please enter a number of messages')
+        await ctx.send(embed=embed)
       else:
-        try:
-          member = await UserConverter().convert(ctx, member)
-        except:
-          await ctx.send("I couldn't find the bad person, so I didn't delete any messages")
-        else:
-          def check(m):
-            return m.author == member
-          await ctx.purge(limit=int(number), check=check)
+        if number > 99:
+          number = 99
+        if member == None:
+          await ctx.channel.purge(limit=(int(number)+1))
           channel = self.bot.get_channel(int(cfg.data['logchannel']))
-          await channel.send(f"{ctx.message.author} cleared {number} messages in {ctx.channel.mention}")
+          embed = cfg.buildembed(ctx.message.author, f'cleared {number} messages in {ctx.channel.mention}')
+          await channel.send(embed=embed)
+        else:
+          try:
+            member = await MemberConverter().convert(ctx, str(member))
+          except:
+            embed = cfg.buildembed('Clear', f"I couldn't find {str(member)}, so I didn't delete any messages")
+            await ctx.send(embed=embed)
+          else:
+            def check(m):
+              return m.author.id == member.id
+            await ctx.channel.purge(limit=int(number), check=check)
+            if cfg.data['log'] == True:
+              channel = self.bot.get_channel(int(cfg.data['logchannel']))
+              embed = cfg.buildembed(ctx.message.author, f'cleared {number} messages by {str(member)} in {ctx.channel.mention}')
+              await channel.send(embed=embed)
 
   @commands.Cog.listener()
   async def on_message(self, message):
-    if cfg.data["wordfilter"] == False:
-      self.bot.remove_listener(Administration.on_message)
-    else:
-      if any(slur in message.content.lower() for slur in cfg.data['slurs']):
-        await message.delete()
-        channel = self.bot.get_channel(int(cfg.data['logchannel']))
-        embed = discord.Embed(title=f"{message.author} used a slur", description=f"in {message.channel.mention}")
-        await channel.send(embed=embed)
-        await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
+    if any(slur in message.content.lower() for slur in cfg.data['slurs']):
+      await message.delete()
+      channel = self.bot.get_channel(int(cfg.data['logchannel']))
+      embed = cfg.buildembed(f"{message.author} used a slur", f"in {message.channel.mention}")
+      await channel.send(embed=embed)
+      await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
 
 def setup(bot):
   bot.add_cog(Administration(bot))

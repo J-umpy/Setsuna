@@ -15,7 +15,7 @@
       "usage": "prefix [new prefix]",
       "info": "- If no prefix is entered, the bot will tell you the current prefix"
     },
-    "owner": {
+    "botowner": {
       "description": "Changes or displays the owners of the bot",
       "usage": "ownerid [new owner's ID]",
       "info": "- If no new owner is specified, a list of owners is displayed instead"
@@ -73,8 +73,8 @@
     },
     "showemote": {
       "description": "Sends an embed containing a large version of and information about an emote",
-      "usage": "showemoji [emoji]",
-      "info": "- This command may not correctly display an error message when a malformed argument is invoked. A fix has been found and will be implemented soon"
+      "usage": "showemote [emoji]",
+      "info": "- If you don't have Nitro, sending the emoji ID might work"
     },
     "actionlist": {
       "description": "Sends a list of audit log actions",
