@@ -1,5 +1,5 @@
 # Setsuna
-**With over 550 lines of code, Setsuna is almost ready for a full release!**
+**With over 600 lines of code, Setsuna is almost ready for a full release!**
 
 Setsuna is a general-purpose Discord Bot, and one of the view made in discord.py!
 She currently features 10 commands (not including settings), a Starboard (with pineapples), and various settings
@@ -18,7 +18,8 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Type '.help settings' and Setsuna will explain the rest!
 ## Plans
 ### Next Update
-- Bug fixes and optimization
+- Polling
+- Say command
 ### This Month
 - Polling
 - Suggestions
