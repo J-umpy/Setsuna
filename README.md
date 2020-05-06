@@ -22,8 +22,6 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Say command
 ### This Month
 - Polling
-- Suggestions
-- Giveaways
 - "Say command" Make the bot talk!
 - Compliment command
 - Server-specific settings
