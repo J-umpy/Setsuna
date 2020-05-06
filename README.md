@@ -18,10 +18,9 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Type '.help settings' and Setsuna will explain the rest!
 ## Plans
 ### Next Update
-- Polling
 - Say command
 ### This Month
-- Polling
+COMPLETE ~~Polling~~
 - "Say command" Make the bot talk!
 - Compliment command
 - Server-specific settings
@@ -35,4 +34,4 @@ She currently features 10 commands (not including settings), a Starboard (with p
 
 [Patreon](https://www.patreon.com/jumpyvonvagabond)
 
-Thank you so much to everyone who reads this. I've poured over 60 hours into this project, and it's finally nearing a "completed" state. I hope you'll join me for the rest of the ride. ;-;
+Thank you so much to everyone who reads this. I've poured over 80 hours into this project, and it's finally nearing a "completed" state. I hope you'll join me for the rest of the ride. ;-;
