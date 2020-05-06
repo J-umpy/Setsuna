@@ -100,12 +100,13 @@ class Administration(commands.Cog):
 
   @commands.Cog.listener()
   async def on_message(self, message):
-    if any(slur in message.content.lower() for slur in cfg.data['slurs']):
-      await message.delete()
-      channel = self.bot.get_channel(int(cfg.data['logchannel']))
-      embed = cfg.buildembed(f"{message.author} used a slur", f"in {message.channel.mention}")
-      await channel.send(embed=embed)
-      await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
+    if cfg.data['wordfilter'] == False:
+      if any(slur in message.content.lower() for slur in cfg.data['slurs']):
+        await message.delete()
+        channel = self.bot.get_channel(int(cfg.data['logchannel']))
+        embed = cfg.buildembed(f"{message.author} used a slur", f"in {message.channel.mention}")
+        await channel.send(embed=embed)
+        await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
 
 def setup(bot):
   bot.add_cog(Administration(bot))

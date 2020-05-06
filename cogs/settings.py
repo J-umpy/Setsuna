@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.ext.commands import bot
-from discord.ext.commands import MemberConverter
-from discord.ext.commands import TextChannelConverter
+from discord.ext.commands import bot, MemberConverter, TextChannelConverter
 import json
 import cfg
 def dump():
@@ -128,13 +126,13 @@ class Settings(commands.Cog):
             cfg.data['wordfilter'] = True
             self.bot.reload_extension('cogs.administration')
             dump()
-            embed = cfg.buildembed("Word Filter", "has been set to True")
+            embed = cfg.buildembed("Word Filter", "Word Filter has been set to True")
             await ctx.send(embed=embed)
           else:
             cfg.data['wordfilter'] = False
             self.bot.remove_listener(cog.on_message)
             dump()
-            embed = cfg.buildembed("Word Filter", "has been set to False")
+            embed = cfg.buildembed("Word Filter", "Word Filter has been set to False")
             await ctx.send(embed=embed)
         elif payload.lower() == 'remove':
           try:
@@ -176,13 +174,16 @@ class Settings(commands.Cog):
         if cfg.data['pineappleboard']['enabled'] == False:
           cfg.data['pineappleboard']['enabled'] = True
           self.bot.reload_extension('cogs.utility')
-          embed = cfg.buildembed("Pineappleboard", "This command requires the manage channels permission")
+          embed = cfg.buildembed("Pineappleboard", "Pineappleboard has been enabled")
           await ctx.send(embed=embed)
         else:
           cfg.data['pineappleboard']['enabled'] = False
           cog = self.bot.get_cog('Utility')
-          self.bot.remove_listener(cog.on_reaction_add)
+          self.bot.remove_listener(cog.on_raw_reaction_add)
+          embed = cfg.buildembed("Pineappleboard", "Pineappleboard has been disabled")
+          await ctx.send(embed=embed)
         dump()
+          
       elif payload.lower() == 'count':
         try:
           int(setting)
@@ -192,6 +193,8 @@ class Settings(commands.Cog):
         else:
           cfg.data['pineappleboard']['count'] = int(setting)
           dump()
+          embed = cfg.buildembed("Pineappleboard", f"Pineapple threshold changed to {setting}")
+          await ctx.send(embed=embed)
       elif payload.lower() == 'channel':
         try:
           payload = await TextChannelConverter().convert(ctx, str(setting))
@@ -201,6 +204,8 @@ class Settings(commands.Cog):
         else:
           cfg.data['pineappleboard']['channel'] = setting.id
           dump()
+          embed = cfg.buildembed("Pineappleboard", f"Pineappleboard channel changed to {setting.mention}")
+          await ctx.send(embed=embed)
       else:
         embed = cfg.buildembed("Pineappleboard Settings", "Here's a list of settings")
         embed.add_field(name="Count", value=f"To change the number of pineapples required to get a message added to the board, use {ctx.prefix}pineappleboard count [number]", inline=False)
