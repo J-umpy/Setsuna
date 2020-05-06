@@ -74,7 +74,7 @@
     "showemote": {
       "description": "Sends an embed containing a large version of and information about an emote",
       "usage": "showemote [emoji]",
-      "info": "- If you don't have Nitro, sending the emoji ID might work"
+      "info": "- This command does not work with Unicode emotes"
     },
     "actionlist": {
       "description": "Sends a list of audit log actions",
@@ -90,6 +90,11 @@
       "description": "Sends the number of members in a server or with a specified role",
       "usage": "membercount [role]",
       "info ": "- If no role is specified, it shows the member count of the server\n- This command can not get the member count of other servers"
+    },
+    "poll": {
+      "description": "Creates a poll with up to 5 options",
+      "usage": "poll [channel (optional)]",
+      "info": "- Command times out after 60 seconds"
     }
   },
 
