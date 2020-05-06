@@ -33,7 +33,7 @@ class Administration(commands.Cog):
               embed = cfg.buildembed('Ban', f'{str(member)} was banned by {str(ctx.message.author)}', discord.Colour.red())
               embed.add_field(name='Reason', value=reason)
               await ctx.send(embed=embed)
-              await ctx.guild.ban(member, reason=f'{reason} ||| Ban issued by: {str.ctx.message.author}', delete_message_days=0)
+              await ctx.guild.ban(member, reason=f'{reason} ||| Ban issued by: {str(ctx.message.author)}', delete_message_days=0)
             except:
               embed = cfg.buildembed('Ban', 'I am missing permissions')
               await ctx.send(embed=embed)
@@ -62,7 +62,7 @@ class Administration(commands.Cog):
               embed = cfg.buildembed('Kick', f'{str(member)} was banned by {str(ctx.message.author)}', discord.Colour.red())
               embed.add_field(name='Reason', value=reason)
               await ctx.channel.send(embed=embed)
-              await ctx.guild.kick(member, reason=f'{reason} ||| Kicked by: {str.ctx.message.author}')
+              await ctx.guild.kick(member, reason=f'{reason} ||| Kicked by: {str(ctx.message.author)}')
             except:
               embed = cfg.buildembed('Kick', 'I am missing permissions')
               await ctx.send(embed=embed)
