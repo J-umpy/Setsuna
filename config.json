@@ -18,5 +18,6 @@
         "channel": "",
         "count": 6,
         "enabled": false
-    }
+    },
+    "countblacklist": []
 }
