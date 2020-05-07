@@ -73,7 +73,7 @@ class Administration(commands.Cog):
       try:
         int(number)
       except:
-        embed = cfg.buildembed('Clear', 'Please enter a number of messages')
+        embed = cfg.buildembed('Clear', 'This command requires a number of messages to be specified')
         await ctx.send(embed=embed)
       else:
         if number > 99:
@@ -81,7 +81,7 @@ class Administration(commands.Cog):
         if member == None:
           await ctx.channel.purge(limit=(int(number)+1))
           channel = self.bot.get_channel(int(cfg.data['logchannel']))
-          embed = cfg.buildembed(ctx.message.author, f'cleared {number} messages in {ctx.channel.mention}')
+          embed = cfg.buildembed(str(ctx.message.author), f'cleared {number} messages in {ctx.channel.mention}')
           await channel.send(embed=embed)
         else:
           try:
@@ -100,7 +100,7 @@ class Administration(commands.Cog):
 
   @commands.Cog.listener()
   async def on_message(self, message):
-    if cfg.data['wordfilter'] == False:
+    if cfg.data['wordfilter'] == True:
       if any(slur in message.content.lower() for slur in cfg.data['slurs']):
         await message.delete()
         channel = self.bot.get_channel(int(cfg.data['logchannel']))

@@ -97,6 +97,19 @@
       "info": "- Command times out after 60 seconds"
     }
   },
+  "fun": {
+    "count": {
+      "description": "Starts a counting game",
+      "usage": "count",
+      "info": "- To blacklist a channel, invoke the command with 'count blacklist [channel]\n- 4% Chance of a bonus game occurring"
+    },
+    "say": {
+      "description": "Makes the bot say whatever follows",
+      "usage": "say [message]",
+      "info": "- Command requires manage messages permission\n- Up to 1 image is supported per message\n- Image must be uploaded directly"
+    }
+
+  },
 
   "help": {
     "help": {

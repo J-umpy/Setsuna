@@ -136,9 +136,12 @@ class Utility(commands.Cog):
   
   @commands.command()
   async def poll(self, ctx, channel = None):
-    try:
-      channel = await TextChannelConverter().convert(ctx, channel)
-    except:
+    if ctx.author.guild_permissions.manage_messages == True:
+      try:
+        channel = await TextChannelConverter().convert(ctx, channel)
+      except:
+        channel = ctx.channel
+    else:
       channel = ctx.channel
     def check(m):
       return m.channel == ctx.channel and m.author == ctx.author
@@ -172,7 +175,7 @@ class Utility(commands.Cog):
         for i in embed.fields:
           count += 1
           await message.add_reaction(key[count])
-
+  
   @commands.Cog.listener()
   async def on_raw_message_delete(self, deleted_message):
     if deleted_message.cached_message == None:
@@ -193,7 +196,7 @@ class Utility(commands.Cog):
         embed.add_field(name='Message Author Mention (If Available)', value=deleted_message.cached_message.author.mention)
         embed.add_field(name='Messasge Content', value=deleted_message.cached_message.content, inline=False)
         await log.send(embed=embed)
-      
+  
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
     if cfg.data['log'] == True:
@@ -224,7 +227,7 @@ class Utility(commands.Cog):
         if reaction.count > cfg.data['pineappleboard']['count']:
           def predicate(msg):
             return msg.author.bot
-          async for m in channel.history(limit=5).filter(predicate):
+          async for m in channel.history(limit=10).filter(predicate):
             if int(m.embeds[0].fields[0].value[82:].replace(")", "")) == reaction.message.id:
               for r in reaction.message.reactions:
                 if r.emoji == '\N{PINEAPPLE}':

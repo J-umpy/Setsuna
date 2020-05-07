@@ -96,14 +96,11 @@ class Settings(commands.Cog):
           if cfg.data['welcome']['enabled'] == False:
             cfg.data['welcome']['enabled'] = True
             dump()
-            self.bot.reload_extension('cogs.utility')
             embed = cfg.buildembed("Welcome", "Welcome messages have been set to True")
             await ctx.send(embed=embed)
           else:
             cfg.data['welcome']['enabled'] = False
             dump()
-            cog = self.bot.get_cog('Utility')
-            self.bot.remove_listener(cog.on_member_join)
             embed = cfg.buildembed("Welcome", "Welcome messages have been set to False")
             await ctx.send(embed=embed)
         else:
@@ -121,16 +118,13 @@ class Settings(commands.Cog):
     if ctx.message.author.guild_permissions.manage_channels:
       if payload != None:
         if payload.lower() == 'toggle':
-          cog = self.bot.get_cog('Administration')
           if cfg.data['wordfilter'] == False:
             cfg.data['wordfilter'] = True
-            self.bot.reload_extension('cogs.administration')
             dump()
             embed = cfg.buildembed("Word Filter", "Word Filter has been set to True")
             await ctx.send(embed=embed)
           else:
             cfg.data['wordfilter'] = False
-            self.bot.remove_listener(cog.on_message)
             dump()
             embed = cfg.buildembed("Word Filter", "Word Filter has been set to False")
             await ctx.send(embed=embed)
@@ -173,17 +167,13 @@ class Settings(commands.Cog):
       if payload.lower() == 'toggle':
         if cfg.data['pineappleboard']['enabled'] == False:
           cfg.data['pineappleboard']['enabled'] = True
-          self.bot.reload_extension('cogs.utility')
           embed = cfg.buildembed("Pineappleboard", "Pineappleboard has been enabled")
           await ctx.send(embed=embed)
         else:
           cfg.data['pineappleboard']['enabled'] = False
-          cog = self.bot.get_cog('Utility')
-          self.bot.remove_listener(cog.on_raw_reaction_add)
           embed = cfg.buildembed("Pineappleboard", "Pineappleboard has been disabled")
           await ctx.send(embed=embed)
         dump()
-          
       elif payload.lower() == 'count':
         try:
           int(setting)
@@ -231,15 +221,11 @@ class Settings(commands.Cog):
       elif payload.lower() == 'toggle':
         if cfg.data['log'] == False:
           cfg.data['log'] = True
-          self.bot.reload_extension('cogs.utility')
           dump()
           embed = cfg.buildembed("Log", "Logging has been changed to True")
           await ctx.send(embed=embed)
         else:
           cfg.data['log'] = False
-          cog = self.bot.get_cog('Utility')
-          self.bot.remove_listener(cog.on_raw_message_delete)
-          self.bot.remove_listener(cog.on_member_ban)
           dump()
           embed = cfg.buildembed("Log", "Logging has been changed to False")
           await ctx.send(embed=embed)
