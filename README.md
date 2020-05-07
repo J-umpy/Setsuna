@@ -36,7 +36,7 @@ COMPLETE ~~Polling~~
 
 Thank you so much to everyone who reads this. I've poured over 80 hours into this project, and it's finally nearing a "completed" state. I hope you'll join me for the rest of the ride. ;-;
 
-### Setsuna is Copyright (C) Zoey "Jumpy" W.
+### Setsuna is Copyright 2018-2020 (C) Zoey "Jumpy" W.
 "Setsuna" is free software: you can redistribute it and/or modify it under the terms described in the license. The license can be modified at any time, so check back every now and again.
 
 "Setsuna" is distributed without any warranty, implied or expressed. See the
