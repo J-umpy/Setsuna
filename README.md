@@ -1,7 +1,7 @@
 # Setsuna
-**With over 600 lines of code, Setsuna is almost ready for a full release!**
+**With over 700 lines of code, Setsuna is almost ready for a full release!**
 
-Setsuna is a general-purpose Discord Bot, and one of the view made in discord.py!
+Setsuna is a general-purpose Discord Bot, and one of the few made in discord.py!
 She currently features 10 commands (not including settings), a Starboard (with pineapples), and various settings
 ## Feature List:
 - Lists audit log actions
@@ -18,15 +18,15 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Type '.help settings' and Setsuna will explain the rest!
 ## Plans
 ### Next Update
-- Say command
+More FUN commands
 ### This Month
 COMPLETE ~~Polling~~
-- "Say command" Make the bot talk!
+COMPLETE ~~"Say command" Make the bot talk!~~
 - Compliment command
 - Server-specific settings
 ### This Year
 - Hosting so you don't have to do any work!
-- Databases with SQLite
+- Database with SQLite
 # Support and Donations
 [Discord](https://discord.gg/calamari)
 
