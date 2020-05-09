@@ -197,6 +197,17 @@ class Utility(commands.Cog):
         embed.add_field(name='Messasge Content', value=deleted_message.cached_message.content, inline=False)
         await log.send(embed=embed)
   
+  @commands.command(aliases=['rc', 'rolecolor', 'editcolor', 'editcolour'])
+  async def rolecolour(self, ctx, hx = None, *, role = None):
+    try:
+      role = await RoleConverter().convert(ctx, role)
+      await role.edit(colour = discord.Colour(int(hx, base=16)))
+      embed = cfg.buildembed('Role Colour', f'{role.name} was edited successfuly', colour=discord.Colour(int(hex, base=16)))
+      await ctx.send(embed=embed)
+    except:
+      embed = cfg.buildembed('Role Colour', 'Something went wrong, please try again')
+      await ctx.send(embed=embed)
+  
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
     if cfg.data['log'] == True:
