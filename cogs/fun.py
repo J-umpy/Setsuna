@@ -5,9 +5,29 @@ import random
 import json
 import asyncio
 import cfg
+import urllib
 class Fun(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
+  async def qmath(self, ctx, loop, num, rannum):
+    rannum = rannum + num
+    def chck(m):
+      return m.channel == ctx.channel and m.author.bot != True
+    try:
+      msg = await self.bot.wait_for('message', timeout=10, check=chck)
+    except asyncio.TimeoutError:
+      embed = cfg.buildembed('Mini Bonus!', "Timed out, let's go back to the main game!")
+    try:
+      msg = int(msg.content)
+    except:
+      embed = cfg.buildembed('Mini Bonus!', "That's not even a number, back to the main game!", discord.Colour.red())
+    if msg == rannum:
+      loop += 5
+      embed = cfg.buildembed('Mini Bonus!', f'You win!\nYour score is now {loop}\nLast recorded number: {num-1}', discord.Colour.green())
+    else:
+      embed = cfg.buildembed('Mini Bonus!', f"You lose! \nThe answer was {rannum}\nYour score is {loop}, now let's get back to it\nLast recorded number: {num-1}", discord.Colour.red())
+    await ctx.send(embed=embed)
+    return loop, num
 
   async def numberguessing(self, ctx, loop, embed, num):
     ans = random.randint(1, 100)
@@ -39,7 +59,7 @@ class Fun(commands.Cog):
           await ctx.send(embed=embed)
           break
     if tries == 0:
-      embed = cfg.buildembed('Bonus Game!', f'You lost!\nThe number was {ans}.\nYour score is {loop}, now back to The Counting Game! Last recorded number: {num-1}')
+      embed = cfg.buildembed('Bonus Game!', f'You lost!\nThe number was {ans}.\nYour score is {loop}, now back to The Counting Game! Last recorded number: {num-1}', discord.Colour.red())
       await ctx.send(embed=embed)
     return loop, num
 
@@ -74,6 +94,16 @@ class Fun(commands.Cog):
                 #await ctx.send(embed=embed)
                 embed = cfg.buildembed('Bonus Time!', "Guess what number I am thinking of! It's between 1 and 100, inclusive")
                 loop, num = await Fun.numberguessing(self, ctx, loop, embed, num)
+              elif random.randint(1, 10) == 2:
+                rannum = random.randint(-100, 100)
+                if rannum < 0:
+                  embed = cfg.buildembed('Mini Bonus!', f"Quickly subtract {abs(rannum)} from {num-1}!")
+                else:
+                  embed = cfg.buildembed('Mini Bonus!', f"Quickly add {rannum} to {num-1}!")
+                await ctx.send(embed=embed)
+                loop, num = await Fun.qmath(self, ctx, loop, num-1, rannum)
+
+
   @count.command(aliases=['bl'])
   async def blacklist(self, ctx, channel):
     if ctx.author.guild_permissions.manage_channels == True:
@@ -108,13 +138,15 @@ class Fun(commands.Cog):
           embed.set_image(url=ctx.message.attachments[0].url)
         await ctx.message.delete(delay=0.5)
         await ctx.send(embed=embed)
-        
 
-
-
-
-
-
+  @commands.command()
+  async def inspire(self, ctx):
+    request = urllib.request.Request("https://inspirobot.me/api?generate=true", None,{'User-Agent':"Opera"})
+    embed = cfg.buildembed("Feel Inspired", "")
+    request =str(urllib.request.urlopen(request).read().decode('UTF-8'))
+    embed.set_image(url=request)
+    embed.set_footer(text="Brought to you by Inspirobot")
+    await ctx.send(embed = embed)
 
 
 def setup(bot):
