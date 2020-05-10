@@ -95,6 +95,11 @@
       "description": "Creates a poll with up to 5 options",
       "usage": "poll [channel (optional)]",
       "info": "- Command times out after 60 seconds"
+    },
+    "rolecolour": {
+      "description": "Edits the colour of a role",
+      "usage": "rolecolour [hexcode] [role]",
+      "info": "- Command works with role names, IDs, or pings\n- Colour must be in hex\n- Embed colour matches the new colour"
     }
   },
   "fun": {
@@ -107,6 +112,11 @@
       "description": "Makes the bot say whatever follows",
       "usage": "say [message]",
       "info": "- Command requires manage messages permission\n- Up to 1 image is supported per message\n- Image must be uploaded directly"
+    },
+    "inspire": {
+      "description": "Inspires you",
+      "usage": "inspire",
+      "info": "- Brought to you by [Inspirobot](https://inspirobot.me/), please check it out!"
     }
 
   },
