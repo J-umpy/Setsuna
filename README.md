@@ -7,25 +7,26 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Server invite command
 - Banning and kicking
 - Deleted message logging
+- Server-specific settings
 - Love and care
 ## Setup
 - Download and extract the source code
 - Open main.py in a Python 3.7+ interpreter
 - Enter your bot account's token and YOUR Discord ID
 - Type '.help settings' and Setsuna will explain the rest!
+
 **Windows exe comming soon**
 ## Plans
 ### Next Update
-More FUN commands
+- Bug fix of any reported bugs during the SQLite and Hosting Beta
 ### This Month
-COMPLETE ~~Polling~~
-COMPLETE ~~"Say command" Make the bot talk!~~
 - Compliment command
-- Server-specific settings
+
 ### This Year
 - Hosting so you don't have to do any work!
 -- Now in BETA!
 COMPLETE ~~Database with SQLite~~
+
 # Support and Donations
 [Discord](https://discord.gg/calamari)
 
