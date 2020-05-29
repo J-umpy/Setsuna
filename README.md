@@ -1,11 +1,8 @@
 # Setsuna
-**With over 700 lines of code, Setsuna is almost ready for a full release!**
 
 Setsuna is a general-purpose Discord Bot, and one of the few made in discord.py!
 She currently features 10 commands (not including settings), a Starboard (with pineapples), and various settings
 ## Feature List:
-- Lists audit log actions
-- Lists banned members
 - Starboard
 - Server invite command
 - Banning and kicking
@@ -16,6 +13,7 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Open main.py in a Python 3.7+ interpreter
 - Enter your bot account's token and YOUR Discord ID
 - Type '.help settings' and Setsuna will explain the rest!
+**Windows exe comming soon**
 ## Plans
 ### Next Update
 More FUN commands
@@ -26,7 +24,8 @@ COMPLETE ~~"Say command" Make the bot talk!~~
 - Server-specific settings
 ### This Year
 - Hosting so you don't have to do any work!
-- Database with SQLite
+-- Now in BETA!
+COMPLETE ~~Database with SQLite~~
 # Support and Donations
 [Discord](https://discord.gg/calamari)
 
