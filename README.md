@@ -17,16 +17,7 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Enter your bot account's token and YOUR Discord ID
 - Type '.help settings' and Setsuna will explain the rest!
 ## Plans
-### Next Update
-More FUN commands
-### This Month
-COMPLETE ~~Polling~~
-COMPLETE ~~"Say command" Make the bot talk!~~
-- Compliment command
-- Server-specific settings
-### This Year
-- Hosting so you don't have to do any work!
-- Database with SQLite
+After Setsuna's SQLite Branch is out of beta, this branch will resume development as Single-Server Setsuna, and she'll have exclusive functions that use too many API requests for public bots
 # Support and Donations
 [Discord](https://discord.gg/calamari)
 
