@@ -4,10 +4,14 @@ from discord.ext.commands import bot
 from discord.ext.commands import MemberConverter
 import json
 import cfg
+import sdb
 class Administration(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
-
+  
+  db = sdb.dbconnect('setsuna.db')
+  cursor = db.cursor()
+  
   @commands.command(aliases=['b'])
   async def ban(self, ctx, member = None, *, reason = None):
     if ctx.message.author.guild_permissions.ban_members == True:
@@ -42,7 +46,7 @@ class Administration(commands.Cog):
   async def kick(self, ctx, member = None, *, reason = None):
     if ctx.message.author.guild_permissions.kick_members == True:
       try:
-        member = await UserConverter().convert(ctx, member)
+        member = await MemberConverter().convert(ctx, member)
       except:
         await ctx.send("Can't kick 'em if I can't find 'em")
       else:
@@ -80,7 +84,8 @@ class Administration(commands.Cog):
           number = 99
         if member == None:
           await ctx.channel.purge(limit=(int(number)+1))
-          channel = self.bot.get_channel(int(cfg.data['logchannel']))
+          channel = sdb.read("Log", "Clear", ctx.guild.id)
+          channel = self.bot.get_channel(channel)
           embed = cfg.buildembed(str(ctx.message.author), f'cleared {number} messages in {ctx.channel.mention}')
           await channel.send(embed=embed)
         else:
@@ -93,20 +98,12 @@ class Administration(commands.Cog):
             def check(m):
               return m.author.id == member.id
             await ctx.channel.purge(limit=int(number), check=check)
-            if cfg.data['log'] == True:
-              channel = self.bot.get_channel(int(cfg.data['logchannel']))
+            log = sdb.read("Log", "Clear", ctx.guild.id)
+            if log != 0:
+              channel = sdb.read("Log", "Clear", ctx.guild.id)
+              channel = self.bot.get_channel(channel)
               embed = cfg.buildembed(ctx.message.author, f'cleared {number} messages by {str(member)} in {ctx.channel.mention}')
               await channel.send(embed=embed)
-
-  @commands.Cog.listener()
-  async def on_message(self, message):
-    if cfg.data['wordfilter'] == True:
-      if any(slur in message.content.lower() for slur in cfg.data['slurs']):
-        await message.delete()
-        channel = self.bot.get_channel(int(cfg.data['logchannel']))
-        embed = cfg.buildembed(f"{message.author} used a slur", f"in {message.channel.mention}")
-        await channel.send(embed=embed)
-        await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")
 
 def setup(bot):
   bot.add_cog(Administration(bot))
