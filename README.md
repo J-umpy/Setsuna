@@ -10,6 +10,9 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Server-specific settings
 - Love and care
 ## Setup
+**Public Setsuna**
+[Invite](https://discord.com/api/oauth2/authorize?client_id=556674964825309184&permissions=8&scope=bot) Setsuna
+**Self-Hosted**
 - Download and extract the source code
 - Open main.py in a Python 3.7+ interpreter
 - Enter your bot account's token and YOUR Discord ID
