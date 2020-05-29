@@ -32,17 +32,6 @@ class Utility(commands.Cog):
         embed = cfg.buildembed(emote.name, f"ID: {emote.id}")
         embed.set_image(url=emote.url)
     await ctx.send(embed=embed)
-  
-  @commands.command()
-  async def joinsim(self, ctx):
-    properties = (ctx.guild.id, '.', 0, 0, None)
-    sdb.cursor.execute("INSERT INTO GuildConfig(GuildID, Prefix, Welcome, WelcomeChannel, WelcomeMessage) VALUES(?, ?, ?, ?, ?)", properties)
-    properties = (ctx.guild.id, 0, None, 0)
-    sdb.cursor.execute("INSERT INTO PBConfig(GuildID, Enabled, Channel, Count) VALUES(?, ?, ?, ?)", properties)
-    properties = (ctx.guild.id, 0, 0, 0, 0)
-    sdb.cursor.execute("INSERT INTO Log(GuildID, DelMsg, Ban, Kick, Clear) VALUES(?, ?, ?, ?, ?)", properties)
-    sdb.db.commit()
-    await ctx.send("Guild Table Built Successfully")
 
   @commands.command(aliases=['ui', 'userinformation', 'whois'])
   async def userinfo(self, ctx, member = None):
