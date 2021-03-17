@@ -227,10 +227,11 @@ class Settings(commands.Cog):
     
   @commands.command(aliases=['mutedrole'])
   async def muterole(self, ctx, role: discord.Role):
-    tools.data['mute'] = int(role.id)
-    dump()
-    embed = tools.buildembed("Mute Role", description="Successfully changed to "+role.name)
-    await ctx.send(embed=embed)
+    if ctx.author.guild_permissions.manage_roles == True:
+      tools.data['mute'] = int(role.id)
+      dump()
+      embed = tools.buildembed("Mute Role", description="Successfully changed to "+role.name)
+      await ctx.send(embed=embed)
   @muterole.error
   async def sendcmd_handler(self, ctx, error):
     if isinstance(error, commands.RoleNotFound) or isinstance(error, commands.MissingRequiredArgument):
