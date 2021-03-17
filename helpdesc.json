@@ -39,6 +39,11 @@
       "description": "Changes or disables logging",
       "usage": "log [action]",
       "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
+    },
+    "muterole": {
+      "description": "Changes the role that's assigned to a user with the mute command",
+      "usage": "muterole [role]",
+      "info": "- Requires manage roles permissions for both the bot and the sender\n- Role names are case sensitive"
     }
   },
   
@@ -105,7 +110,11 @@
       "description": "Edits the colour of a role",
       "usage": "rolecolour [hexcode] [role]",
       "info": "- Command works with role names, IDs, or pings\n- Colour must be in hex\n- Embed colour matches the new colour"
-    }
+    },
+    "avatar": {
+      "description": "Displays the avatar of the selected user in an embed",
+      "usage": "avatar [member (optional)]",
+      "info": "- Command works with member names, IDs, or pings\n- If a user isn't specified or an error occurs, the sender's avatar is sent instead"}
   },
   "fun": {
     "count": {
