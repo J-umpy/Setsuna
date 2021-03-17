@@ -8,16 +8,21 @@ She currently features 10 commands (not including settings), a Starboard (with p
 - Lists banned members
 - Starboard
 - Server invite command
-- Banning and kicking
+- Banning, kicking, and muting
 - Deleted message logging
 - Love and care
 ## Setup
 - Download and extract the source code
-- Open main.py in a Python 3.7+ interpreter
-- Enter your bot account's token and YOUR Discord ID
-- Type '.help settings' and Setsuna will explain the rest!
+- Open launcher.py in a Python 3.7+ interpreter
+- Enter your bot's token and YOUR Discord ID into config.json (make sure the bot token is in quotes, and the ID isn't!)
+- .exe coming soon!
 ## Plans
-After Setsuna's SQLite Branch is out of beta, this branch will resume development as Single-Server Setsuna, and she'll have exclusive functions that use too many API requests for public bots
+Mafia update!
+Plus the following QoL features:
+- Overhaul the remaining legacy code to use more efficient converters
+- Leaderboard for counting game
+- Add a way to remove prefixes
+- Add a way to disable deleted message logging
 # Support and Donations
 [Discord](https://discord.gg/calamari)
 
