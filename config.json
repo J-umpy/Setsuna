@@ -1,23 +1,13 @@
 {
-    "prefix": ".",
     "token": "",
-    "ownerid": [291353858301624320],
-    "config": true,
-    "welcome": {
-        "enabled": false,
-        "channel": "",
-        "message": "{MENTION} has joined the server"
-    },
-    "welcomechannel": "",
-    "log": false,
-    "logchannel": "",
-    "deletedmessageschannel": "",
+    "owner": 291353858301624320,
+    "prefixes": [
+        "."
+    ],
     "wordfilter": false,
-    "slurs": [],
-    "pineappleboard": {
-        "channel": "",
-        "count": 6,
-        "enabled": false
-    },
-    "countblacklist": []
+    "bannedwords": [],
+    "logchannel": 1,
+    "countblacklist": [],
+    "deletedmessageschannel": 1,
+    "mute": 1
 }

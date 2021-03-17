@@ -1,0 +1,136 @@
+{
+  "settings": {
+    "settingslist": {
+      "description": "Settings List",
+      "usage": "settingslist",
+      "info": "None"
+    },
+    "configreload": {
+      "description": "Reloads config.json. This is unneccessary 99% of the time",
+      "usage": "configreload",
+      "info": "- This command is only necessary if the bot is behaving unexpectedly after changing settings"
+    },
+    "prefix": {
+      "description": "Changes or displays the prefix",
+      "usage": "prefix [new prefix]",
+      "info": "- If no prefix is entered, the bot will tell you the current prefix"
+    },
+    "botowner": {
+      "description": "Changes or displays the owners of the bot",
+      "usage": "ownerid [new owner's ID]",
+      "info": "- If no new owner is specified, a list of owners is displayed instead"
+    },
+    "welcome": {
+      "description": "Changes or disables the welcome command",
+      "usage": "welcome [action]",
+      "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
+    },
+    "wordfilter": {
+      "description": "Changes or disables the word filter",
+      "usage": "wordfilter [action]",
+      "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
+    },
+    "pineappleboard": {
+      "description": "Modifies or disables the Pineapple Board",
+      "usage": "pineappleboard [action]",
+      "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
+    },
+    "log": {
+      "description": "Changes or disables logging",
+      "usage": "log [action]",
+      "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
+    }
+  },
+  
+  "administration": {
+    "ban": {
+      "description": "Bans the user from the server",
+      "usage": "ban [user] [reason]",
+      "info": "- Requires ban permissions for both the bot and for the sender\n- Cannot ban those with roles above the bot or the sender\n- Reason is not optional"
+    },
+    "kick": {
+      "description": "Kicks the user from the server",
+      "usage": "kick [user] [reason]",
+      "info": "- Requires kick permissions for both the bot and for the sender\n- Cannot kick those with roles above the bot or the sender\n- Reason is not optional"
+    },   
+    "clear": {
+      "description": "Deletes a set number of messages",
+      "usage": "clear [number of messages] [user (optional)]",
+      "info": "- If the number entered is greater than 100, the number will be changed to 100\n- If the command is entered without a number or user, 5 messages will be deleted"
+    },
+    "mute": {
+      "description": "Disables a user's ability to talk on the server",
+      "usage": "mute [user] [reason]",
+      "info": "- Requires manage roles permissions for both the bot and the sender\n- Cannot mute those with roles above the bot or the sender\n- Reason is not optional"
+    }
+  },
+
+  "utility": {
+    "invite": {
+      "description": "Sends the oldest server invite",
+      "usage": "invite",
+      "info": "- If a vanity url exists for the server, that is sent instead"
+    },
+    "userinfo": {
+      "description": "Sends various information about a user",
+      "usage": "userinfo [user]",
+      "info": "- If no user is targeted, info about the message author will be shown instead\n - The embed color is indicitave of online status"
+    },
+    "showemote": {
+      "description": "Sends an embed containing a large version of and information about an emote",
+      "usage": "showemote [emoji]",
+      "info": "- This command does not work with Unicode emotes"
+    },
+    "actionlist": {
+      "description": "Sends a list of audit log actions",
+      "usage": "actionlist [action] [user (optional)]",
+      "info": "- All fields are optional.\n- Leaving all fields empty will send the most recent actions.\n- The fields can be sent in any order.\nThe 'action' field must be sent in Discord's internal format.\n- Example: 'actionlist Member_Role_Update' would send a list of the most recent role updates"
+    },
+    "banlist": {
+      "description": "Sends a list of banned users",
+      "usage": "banlist [page number]",
+      "info": "- If ban reasons are too long, the command might not display correctly. A fix has been found and will be implemented soon"
+    },
+    "membercount": {
+      "description": "Sends the number of members in a server or with a specified role",
+      "usage": "membercount [role]",
+      "info ": "- If no role is specified, it shows the member count of the server\n- This command can not get the member count of other servers"
+    },
+    "poll": {
+      "description": "Creates a poll with up to 5 options",
+      "usage": "poll [channel (optional)]",
+      "info": "- Command times out after 60 seconds"
+    },
+    "rolecolour": {
+      "description": "Edits the colour of a role",
+      "usage": "rolecolour [hexcode] [role]",
+      "info": "- Command works with role names, IDs, or pings\n- Colour must be in hex\n- Embed colour matches the new colour"
+    }
+  },
+  "fun": {
+    "count": {
+      "description": "Starts a counting game",
+      "usage": "count",
+      "info": "- To blacklist a channel, invoke the command with 'count blacklist [channel]\n- 4% Chance of a bonus game occurring"
+    },
+    "say": {
+      "description": "Makes the bot say whatever follows",
+      "usage": "say [message]",
+      "info": "- Command requires manage messages permission\n- Up to 1 image is supported per message\n- Image must be uploaded directly"
+    },
+    "inspire": {
+      "description": "Inspires you",
+      "usage": "inspire",
+      "info": "- Brought to you by [Inspirobot](https://inspirobot.me/), please check it out!"
+    }
+
+  },
+
+  "help": {
+    "help": {
+      "description": "Sends a list of commands or modules",
+      "usage": "help [command or module]",
+      "info": "- I love you"
+    }
+  }
+}
