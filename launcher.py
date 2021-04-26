@@ -8,7 +8,7 @@ import tools
 #Required as of Version 1.5 to tell Discord what events to subscribe to, default() is all
 intents = discord.Intents.default()
 intents.members = True
-intents.presence = True
+intents.presences = True
 
 #Grabs prefixes from the list in config.json and allows Setsuna to respond to commands when pinged
 def get_prefix(client, message):
