@@ -13,7 +13,7 @@ def get_prefix(client, message):
   prefixes = tools.data['prefixes']
   return commands.when_mentioned_or(*prefixes)(client, message)
 
-bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True, owner_id=tools.data['owner'])
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True, owner_id=tools.data['owner'], intents=intents)
 
 #Discord.py comes with a help command, it's removed here so I can use a custom one
 bot.remove_command("help")
