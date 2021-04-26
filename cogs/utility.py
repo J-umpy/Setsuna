@@ -139,12 +139,12 @@ class Utility(commands.Cog):
       embed = tools.buildembed('Member Count', f'There are {len(ctx.guild.members)} in this server')
       await ctx.send(embed=embed)
     else:
-      role = len(role.members)
-      if role == 1:
+      rolecount = len(role.members)
+      if rolecount == 1:
         embed = tools.buildembed('Member Count', f'There is 1 member with the {role.name} role in {ctx.guild.name}')
         await ctx.send(embed=embed)
       else:
-        embed = tools.buildembed('Member Count', f'There are {role} members with the {role.name} role in {ctx.guild.name}')
+        embed = tools.buildembed('Member Count', f'There are {rolecount} members with the {role.name} role in {ctx.guild.name}')
         await ctx.send(embed=embed)
   
   # Sends the specified user's avatar in an embed
