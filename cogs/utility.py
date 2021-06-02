@@ -211,89 +211,44 @@ class Utility(commands.Cog):
           count += 1
           await message.add_reaction(key[count])
   
-  # Sets the colour of a role
-  @commands.command(aliases=['rc', 'rolecolor', 'editcolor', 'editcolour'])
-  async def rolecolour(self, ctx, hx = None, *, role = None):
-    if ctx.author.guild_permissions.manage_roles == True:
-      try:
-        role = await RoleConverter().convert(ctx, role)
-        await role.edit(colour = discord.Colour(int(hx, base=16)))
-        embed = cfg.buildembed('Role Colour', f'{role.name} was edited successfuly', colour=discord.Colour(int(hex, base=16)))
-        await ctx.send(embed=embed)
-      except:
-        embed = cfg.buildembed('Role Colour', 'Something went wrong, please try again')
-        await ctx.send(embed=embed)
-
   @commands.Cog.listener()
-  async def on_raw_message_delete(self, deleted_message):
-    if deleted_message.cached_message == None:
-      log = self.bot.get_channel(tools.data['deletedmessageschannel'])
-      channel = self.bot.get_channel(deleted_message.channel_id)
-      embed = tools.buildembed('Message Deleted', f'in {channel.mention}', discord.Colour.red())
-      embed.add_field(name='Message ID', value=deleted_message.message_id)
-      embed.add_field(name='Message Content Unavailable', value="The message wasn't cached in time for it to be logged, sorry")
-      await log.send(embed=embed)
-    else:
-      if not deleted_message.cached_message.author.bot:
-        log = self.bot.get_channel(tools.data['deletedmessageschannel'])
+  async def on_message_delete(self, deleted_message):
+    if not deleted_message.author.bot:
+      log = await tools.read('Log', 'DelMsg', deleted_message.guild.id)
+      if log != 0:
+        log = self.bot.get_channel(log)
         channel = self.bot.get_channel(deleted_message.channel_id)
         embed = tools.buildembed('Message Deleted', f'in {channel.mention}', discord.Colour.red())
         embed.add_field(name='Message ID', value=deleted_message.message_id)
-        embed.add_field(name='Message Author', value=deleted_message.cached_message.author)
-        embed.add_field(name='Message Author Nickname', value=deleted_message.cached_message.author.display_name)
-        embed.add_field(name='Message Author Mention (If Available)', value=deleted_message.cached_message.author.mention)
-        embed.add_field(name='Messasge Content', value=deleted_message.cached_message.content, inline=False)
+        embed.add_field(name='Message Author', value=deleted_message.author)
+        embed.add_field(name='Message Author Nickname', value=deleted_message.author.display_name)
+        embed.add_field(name='Message Author Mention (If Available)', value=deleted_message.author.mention)
+        embed.add_field(name='Messasge Content', value=deleted_message.content, inline=False)
         await log.send(embed=embed)
       
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
-    ban = await guild.fetch_ban(user)
-    embed = tools.buildembed("Member banned", f"{str(user)} was banned from {guild}", discord.Colour.red())
-    embed.add_field(name="Reason", value=ban.reason)
-    channel = self.bot.get_channel(tools.data["logchannel"])
-    await channel.send(embed=embed)
+    channel = await tools.read('Log', 'Ban', guild.id)
+    if channel != 0:
+      ban = await guild.fetch_ban(user)
+      embed = tools.buildembed("Member banned", f"{str(user)} was banned from {guild}", discord.Colour.red())
+      embed.add_field(name="Reason", value=ban.reason)
+      channel = self.bot.get_channel(channel)
+      await channel.send(embed=embed)
+  @commands.Cog.listener()
+  async def on_member_kick(self, guild, user):
+    channel = await tools.read('Log', 'Kick', guild.id)
+    if channel != 0:
+      embed = tools.buildembed("Member kicked", f"{str(user)} was kicked from {guild}", discord.Colour.red())
+      channel = self.bot.get_channel(channel)
+      await channel.send(embed=embed)
   
-  # Welcome command, disabled because Setsuna isn't verified
+  # Welcome command, disabled temporarily
   # @commands.Cog.listener()
   # async def on_member_join(self, member):
   #   channel = self.bot.get_channel(tools.data["welcomechannel"])
   #   key = {'MENTION': member.mention, 'SERVER': member.guild.name}
   #   await channel.send(tools.data["welcome"]["message"].format(**key))
-
-# Starboard, disabled because my server doesn't use it
-  # @commands.Cog.listener()
-  # async def on_raw_reaction_add(self, payload):
-  #   if payload.emoji.name == '\N{PINEAPPLE}':
-  #     channel = self.bot.get_channel(tools.data["pineappleboard"]["channel"])
-  #     rchannel= self.bot.get_channel(payload.channel_id)
-  #     rmessage = await rchannel.fetch_message(payload.message_id)
-  #     for reaction in rmessage.reactions:
-  #       if reaction.emoji == '\N{PINEAPPLE}':
-  #         reaction = reaction
-  #         break
-  #     if reaction.count > tools.data['pineappleboard']['count']:
-  #       async for m in channel.history(limit=5):
-  #         if int(m.embeds[0].fields[0].value[82:].replace(")", "")) == reaction.message.id:
-  #           for r in reaction.message.reactions:
-  #             if r.emoji == '\N{PINEAPPLE}':
-  #               count = r.count
-  #             break
-  #           embed = m.embeds[0]
-  #           embed.set_footer(text=f'Highest {reaction.emoji}: {count}')
-  #           await m.edit(embed=embed)
-  #           break
-  #     elif reaction.count == tools.data['pineappleboard']['count']:
-  #       if reaction.message.channel != channel: 
-  #         embed = tools.buildembed(str(reaction.message.author), reaction.message.content, discord.Colour.gold())
-  #         embed.add_field(name="Original Message", value=f"[Jump Link]({reaction.message.jump_url})", inline=False)
-  #         embed.set_thumbnail(url=reaction.message.author.avatar_url)
-  #         embed.set_footer(text=f'Highest {reaction.emoji}: {reaction.count}')
-  #         att = rmessage.attachments[0]
-  #         if att.url.lower().endswith(('png', 'jpeg', 'jpg', 'gif', 'webp')):
-  #           embed.set_image(url=att.url)
-  #         else:
-  #           embed.add_field(name='Message Attachment', value=f'[{att.filename}]({att.url})', inline=False)
-  #         await channel.send(embed=embed)
 
 def setup(bot):
   bot.add_cog(Utility(bot))

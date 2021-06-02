@@ -1,42 +1,28 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import bot, MemberConverter, TextChannelConverter
-import json
 import tools
-def dump():
-  with open('config.json', 'w') as f:
-    json.dump(tools.data, f, indent=4)
 class Settings(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
     self._last_member = None
   
-  #Calls on the reload function from tools.py
-  @commands.command(aliases=['toolsrld', 'settingsreload'])
-  async def configreload(self, ctx):
-    try:
-      tools.cfgreload()
-    except:
-      embed = tools.buildembed("Config Reload", "Config could not be reloaded, please redownload the bot data from [here](https://github.com/Jumpyvonvagabond/Setsuna/releases)")
-      await ctx.send(embed=embed)
-    else:
-      embed = tools.buildembed("Config Reload", "Successfully reloaded\nIf errors persist, please redownload the bot data from [here](https://github.com/Jumpyvonvagabond/Setsuna/releases)")
-      await ctx.send(embed=embed)
   
   # Adds a bot prefix
   @commands.command()
   async def prefix(self, ctx, prefix = None):
     if prefix != None:
-      if ctx.message.author.guild_permissions.administrator:
-        tools.data['prefix'].append(prefix)
-        dump()
+      if ctx.message.author.guild_permissions.manage_channels:
+        await tools.update('GuildConfig', 'Prefix', prefix, ctx.guild.id)
         embed = tools.buildembed("Prefix", f"The command prefix has been set to `{prefix}`")
         await ctx.send(embed=embed)
       else:
-        embed = tools.buildembed("Prefix", "This command requires administrator server permissions")
+        embed = tools.buildembed("Prefix", "This command requires the manage channels server permission")
         await ctx.send(embed=embed)
     else:
-      embed = tools.buildembed("Prefix", f"The command prefix for this server is `{prefix}`")
+      tools.cursor.execute("SELECT Prefix FROM GuildConfig WHERE GuildID='"+str(ctx.guild.id)+"'")
+      prefix = tools.cursor.fetchall()
+      embed = tools.buildembed("Prefix", f"The command prefix for this server is `{prefix[0][0]}`")
       await ctx.send(embed=embed)
     
     
@@ -86,25 +72,15 @@ class Settings(commands.Cog):
   #     embed = tools.buildembed("Welcome", "This command requires the manage channels permission")
   #     await ctx.send(embed=embed)
   
+  #Word Filter Settings
   @commands.command(aliases=['wf'])
   async def wordfilter(self, ctx, payload = None, *, word = None):
     if ctx.message.author.guild_permissions.manage_channels:
       if payload != None:
-        if payload.lower() == 'toggle':
-          if tools.data['wordfilter'] == False:
-            tools.data['wordfilter'] = True
-            dump()
-            embed = tools.buildembed("Word Filter", "Word Filter has been set to True")
-            await ctx.send(embed=embed)
-          else:
-            tools.data['wordfilter'] = False
-            dump()
-            embed = tools.buildembed("Word Filter", "Word Filter has been set to False")
-            await ctx.send(embed=embed)
-        elif payload.lower() == 'remove':
+        if payload.lower() == 'remove':
           try:
-            tools.data['bannedwords'].remove(word.lower())
-            dump()
+            tools.cursor.execute("DELETE FROM WordFilter WHERE Word=? AND GuildID=?", (word, ctx.guild.id,))
+            tools.db.commit()
           except:
             embed = tools.buildembed("Word Filter", f"{word} could not be found in the words list")
             await ctx.send(embed=embed)
@@ -112,23 +88,29 @@ class Settings(commands.Cog):
             embed = tools.buildembed("Word Filter", f"{word} has been successfully removed")
             await ctx.send(embed=embed)
         elif payload.lower() == 'list':
-          embed = tools.buildembed("Word Filter", tools.data['bannedwords'])
+          bwords = await tools.read("WordFilter", "Word", ctx.guild.id)
+          embed = tools.buildembed("List of Banned Words/Phrases", "Items are inside of spoiler tags")
+          for i in bwords:
+            embed.add_field(name=f"||{i}||")
           await ctx.send(embed=embed)
         elif payload.lower() == 'add':
-          if len(tools.data['bannedwords']) < 10:
-            if len(word) < 100:
-              tools.data['bannedwords'].append(word.lower())
-              dump()
-              embed = tools.buildembed("Word Filter", f"{word} added successfully")
-              await ctx.send(embed=embed)
+          bwords = await tools.read("WordFilter", "Word", ctx.guild.id)
+          if len(bwords) < 11:
+            if not word == None:
+              if len(word) < 257:
+                tools.cursor.execute("INSERT INTO WordFilter(GuildID, Word) VALUES(?, ?)", (ctx.guild.id, word))
+                tools.db.commit()
+                embed = tools.buildembed("Word Filter", f"{word} added successfully")
+                await ctx.send(embed=embed)
         else:
           embed = tools.buildembed("Word Filter", f"invalid argument. For a list of arguments, use\n `{ctx.prefix}wordfilter`")
           await ctx.send(embed=embed)
       else:
         embed = tools.buildembed("Word Filter", "Info")
         embed.add_field(name="Toggle", value=f"To toggle the word filter on and off, use `{ctx.prefix}wordfilter toggle`", inline=False)
-        embed.add_field(name="Add", value=f"To add a word to the filter, use `{ctx.prefix}wordfilter add [word]`\nYou can use a phrase or a word\nWords/phrases must be under 100 characters", inline=False)
+        embed.add_field(name="Add", value=f"To add a word to the filter, use `{ctx.prefix}wordfilter add [word]`\nYou can use a phrase or a word\nWords/phrases must be under 256 characters, and a maximum of 10 words/phrases can be banned", inline=False)
         embed.add_field(name="Remove", value=f"To remove a word from the filter, use `{ctx.prefix}wordfilter remove [word]`", inline=False)
+        embed.add_field(name="List", value=f"To view a list of banned words, use `{ctx.prefix}wordfilter list`", inline=False)
         await ctx.send(embed=embed)
     else:
       embed = tools.buildembed("Word Filter", "This command requires the manage channels permission")
@@ -180,63 +162,152 @@ class Settings(commands.Cog):
   #     await ctx.send(embed=embed)
 
   # Log settings
-  @commands.command()
-  async def log(self, ctx, payload = None, setting = None, delmessagechan = None):
+  @commands.group()
+  async def log(self, ctx):
     if ctx.message.author.guild_permissions.manage_channels:
-      #Changes the log channel
-      if payload.lower() == 'channel':
-        try:
-          payload = await TextChannelConverter().convert(ctx, str(setting))
-        except:
-          embed = tools.buildembed("Log", "Invalid text channel input")
-          await ctx.send(embed=embed)
-        else:
-          tools.data['logchannel'] = payload.id
-          dump()
-      # Enables, disables logging
-      elif payload.lower() == 'toggle':
-        if tools.data['log'] == False:
-          tools.data['log'] = True
-          dump()
-          embed = tools.buildembed("Log", "Logging has been changed to True")
-          await ctx.send(embed=embed)
-        else:
-          tools.data['log'] = False
-          dump()
-          embed = tools.buildembed("Log", "Logging has been changed to False")
-          await ctx.send(embed=embed)
-      # Changes the channel deleted messages are logged in
-      elif payload.lower() == 'deletedmessages':
-        try:
-          delmessagechan = await TextChannelConverter().convert(ctx, str(delmessagechan))
-        except:
-          embed = tools.buildembed("Log", "Invalid text channel input")
-          await ctx.send(embed=embed)
-        else:
-          tools.data['deletedmessageschannel'] = delmessagechan.id
-          dump()
+      if ctx.invoked_subcommand == None:
+        embed = tools.buildembed("Log Settings", f"To change the channel used for logging, use {ctx.prefix}log [event] [channel]\nTo disable logging of specific events, use {ctx.prefix}log [event]\nHere's a list of events")
+        embed.add_field(name="When the clear command is used", value=f"clear")
+        embed.add_field(name="When messages are deleted", value=f"deletedmessages")
+        embed.add_field(name="When a member is banned from this server", value=f"ban")
+        embed.add_field(name="When a member is kicked from this server", value=f"kick")
+        embed.add_field(name="When a member is assigned the time out role", value=f"timeout")
+        embed.add_field(name="When a member uses a banned word", value="wordfilter")
+        await ctx.send(embed=embed)
+  #Changes the log channel
+  @log.command(aliases=['delmsg'])
+  async def deletedmessages(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "DelMsg", 0, ctx.guild.id)
+        tools.db.commit()
       else:
-        embed = tools.buildembed("Log Settings", "Here's a list of log settings")
-        embed.add_field(name="Channel", value=f"To change the channel used for logging, use {ctx.prefix}log channel [channel]")
-        embed.add_field(name="Toggle", value=f"To toggle logging on and off, use {ctx.prefix}log toggle")
-        embed.add_field(name="Deleted Messages", value=f"To change the deleted messages channel, use {ctx.prefix}log deletedmessages [channel]")
+        await tools.update("Log", "DelMsg", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
+        await ctx.send(embed=embed)
+    else:
+      embed = tools.buildembed("Log", "This command requires the manage channels permission")
+      await ctx.send(embed=embed)
+  @log.command(aliases=['b'])
+  async def ban(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "Ban", 0, ctx.guild.id)
+        tools.db.commit()
+      else:
+        await tools.update("Log", "Ban", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
+        await ctx.send(embed=embed)
+    else:
+      embed = tools.buildembed("Log", "This command requires the manage channels permission")
+      await ctx.send(embed=embed)
+  @log.command(aliases=['k'])
+  async def kick(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "Kick", 0, ctx.guild.id)
+        tools.db.commit()
+      else:
+        await tools.update("Log", "Kick", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
+        await ctx.send(embed=embed)
+    else:
+      embed = tools.buildembed("Log", "This command requires the manage channels permission")
+      await ctx.send(embed=embed)
+  @log.command(aliases=['timedout', 'to'])
+  async def timeout(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "Timeout", 0, ctx.guild.id)
+        tools.db.commit()
+      else:
+        await tools.update("Log", "Timeout", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
+        await ctx.send(embed=embed)
+    else:
+      embed = tools.buildembed("Log", "This command requires the manage channels permission")
+      await ctx.send(embed=embed)
+  @log.command(aliases=['c', 'purge', 'p'])
+  async def clear(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "Clear", 0, ctx.guild.id)
+        tools.db.commit()
+      else:
+        await tools.update("Log", "Clear", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
+        await ctx.send(embed=embed)
+    else:
+      embed = tools.buildembed("Log", "This command requires the manage channels permission")
+      await ctx.send(embed=embed)
+  @log.command(aliases=['wf'])
+  async def wordfilter(self, ctx, payload=None):
+    if ctx.author.guild_permissions.manage_channels == True:
+      try:
+        payload = await TextChannelConverter().convert(ctx, str(payload))
+      except:
+        await tools.update("Log", "WordFilter", 0, ctx.guild.id)
+        tools.db.commit()
+      else:
+        await tools.update("Log", "WordFilter", payload.id, ctx.guild.id)
+        tools.db.commit()
+        embed = tools.buildembed("Log", "Event value successfully changed")
         await ctx.send(embed=embed)
     else:
       embed = tools.buildembed("Log", "This command requires the manage channels permission")
       await ctx.send(embed=embed)
     
-  @commands.command(aliases=['mutedrole'])
-  async def muterole(self, ctx, role: discord.Role):
+  @commands.command(aliases=['timedoutrole', 'tor'])
+  async def timeoutrole(self, ctx, role: discord.Role):
     if ctx.author.guild_permissions.manage_roles == True:
-      tools.data['mute'] = int(role.id)
-      dump()
+      await tools.update("GuildConfig", "TimeOutRole", role.id, ctx.guild.id)
+      tools.db.commit()
       embed = tools.buildembed("Mute Role", description="Successfully changed to "+role.name)
       await ctx.send(embed=embed)
-  @muterole.error
+  @timeoutrole.error
   async def sendcmd_handler(self, ctx, error):
     if isinstance(error, commands.RoleNotFound) or isinstance(error, commands.MissingRequiredArgument):
       embed = tools.buildembed(title="Muted Role", description="You did not specify a valid role (name or ID, case sensitive)")
       await ctx.send(embed=embed)
+  
+  @commands.command(aliases= ['bl', 'cbl', 'commandblocklist'])
+  async def blocklist(self, ctx, channel: discord.TextChannel):
+    if ctx.author.guild_permissions.manage_channels == True:
+      bchannels = await tools.read("CommandBlocklist", "Channel", ctx.guild.id)
+      if channel.id in bchannels:
+        tools.cursor.execute("DELETE FROM CommandBlocklist WHERE Channel=?", (channel.id))
+        tools.db.commit()
+        embed = tools.buildembed("Command Blocklist", f"{channel.mention} was removed from the blocklist")
+        await ctx.send(embed=embed)
+      else:
+         tools.cursor.execute("INSERT INTO CommandBlocklist(GuildID, Channel) VALUES(?, ?)", (ctx.guild.id, channel.id))
+         tools.db.commit()
+         embed = tools.buildembed("Command Blocklist", f"{channel.mention} was added to the the blocklist")
+         await ctx.send(embed=embed)
+  @blocklist.error
+  async def sendcmd_handler(self, ctx, error):
+    if isinstance(error, commands.ChannelNotFound) or isinstance(error, commands.MissingRequiredArgument):
+      embed = tools.buildembed("Command Blocklist", "Channel could not be found")
+      await ctx.send(embed=embed)
+
+
+
+
 
 def setup(bot):
   bot.add_cog(Settings(bot))

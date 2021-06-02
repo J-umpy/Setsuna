@@ -13,7 +13,7 @@
     "prefix": {
       "description": "Changes or displays the prefix",
       "usage": "prefix [new prefix]",
-      "info": "- If no prefix is entered, the bot will tell you the current prefix"
+      "info": "- If no prefix is entered, the bot will tell you the current prefix and how to change it"
     },
     "botowner": {
       "description": "Changes or displays the owners of the bot",
@@ -37,13 +37,18 @@
     },
     "log": {
       "description": "Changes or disables logging",
-      "usage": "log [action]",
+      "usage": "log",
       "info": "- If no action is specified, detailed information about how to use the command is displayed\n - Refer to that for additional info"
     },
-    "muterole": {
+    "timeoutrole": {
       "description": "Changes the role that's assigned to a user with the mute command",
-      "usage": "muterole [role]",
+      "usage": "timeoutrole [role]",
       "info": "- Requires manage roles permissions for both the bot and the sender\n- Role names are case sensitive"
+    },
+    "blocklist": {
+      "description": "Adds or removes channels from the blocklist",
+      "usage":"blocklist [channel]",
+      "info": "- Requires manage_channels permission from the sender"
     }
   },
   
@@ -63,10 +68,15 @@
       "usage": "clear [number of messages] [user (optional)]",
       "info": "- If the number entered is greater than 100, the number will be changed to 100\n- If the command is entered without a number or user, 5 messages will be deleted"
     },
-    "mute": {
+    "timeout": {
       "description": "Disables a user's ability to talk on the server",
-      "usage": "mute [user] [reason]",
+      "usage": "timeout [user] [reason]",
       "info": "- Requires manage roles permissions for both the bot and the sender\n- Cannot mute those with roles above the bot or the sender\n- Reason is not optional"
+    },
+    "namecheck": {
+      "description": "Iterates through all members of the server and displays a list of names which are 'hoisted' [NOT YET IMPLEMENTED]",
+      "usage": "namecheck",
+      "info": "- Requires manage members permission for both the bot and the sender"
     }
   },
 
@@ -84,7 +94,7 @@
     "showemote": {
       "description": "Sends an embed containing a large version of and information about an emote",
       "usage": "showemote [emoji]",
-      "info": "- This command does not work with Unicode emotes"
+      "info": "- This command does not work with Unicode/default emoji"
     },
     "actionlist": {
       "description": "Sends a list of audit log actions",
@@ -120,7 +130,7 @@
     "count": {
       "description": "Starts a counting game",
       "usage": "count",
-      "info": "- To blacklist a channel, invoke the command with 'count blacklist [channel]\n- 4% Chance of a bonus game occurring"
+      "info": "- To blacklist a channel, invoke the command with `count blacklist [channel]`\n- 7% Chance of a bonus game occurring"
     },
     "say": {
       "description": "Makes the bot say whatever follows",
@@ -140,6 +150,18 @@
       "description": "Sends a list of commands or modules",
       "usage": "help [command or module]",
       "info": "- I love you"
+    }
+  },
+  "mafia": {
+    "mafia": {
+      "description": "Displays the Mafia help window",
+      "usage": "mafia",
+      "info": "- Check it out to see a list of features"
+    }
+  },
+  "xp": {
+    "xp": {
+      
     }
   }
 }

@@ -59,7 +59,9 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, discord.Forbidden):
             embed = tools.buildembed(ctx.command.qualified_name.title(), "I am missing the permissions required to perform this action")
             await ctx.send(embed=embed)
-        
+        elif isinstance(error, commands.ChannelNotReadable):
+            embed = tools.buildembed(ctx.command.qualified_name.title(), "I am missing the permissions to view this channel")
+            await ctx.send(embed=embed)
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)

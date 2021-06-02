@@ -68,7 +68,8 @@ class Fun(commands.Cog):
   @commands.group(aliases=['countinggame', 'counting'])
   async def count(self, ctx):
     if ctx.invoked_subcommand == None:
-      if not ctx.channel.id in tools.data['countblacklist'] or ctx.message.author.guild_permissions.manage_messages == True:
+      bchannels = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      if not ctx.channel.id in bchannels or ctx.message.author.guild_permissions.manage_messages == True:
         num = random.randint(1, 1000)
         await ctx.send(f'The Counting Game has begun! Start counting up!\n{num-1}')
         def check(m):
@@ -106,31 +107,29 @@ class Fun(commands.Cog):
                 await ctx.send(embed=embed)
                 loop, num = await Fun.qmath(self, ctx, loop, num-1, rannum)
 
-  #Count blacklist
+  #Count blocklist
   @count.command(aliases=['bl'])
-  async def blacklist(self, ctx, channel):
+  async def blocklist(self, ctx, channel: discord.TextChannel):
     if ctx.author.guild_permissions.manage_channels == True:
-      try:
-        channel = await TextChannelConverter().convert(ctx, str(channel))
-      except:
-        embed = tools.buildembed('Count Blacklist', 'Channel could not be found')
-        await ctx.channel.send(embed=embed)
-      else:
-        if channel.id in tools.data['countblacklist']:
-          tools.data['countblacklist'].remove(channel.id)
-          with open('config.json', 'w') as f:
-            json.dump(tools.data, f, indent=4)
-          embed = tools.buildembed('Count Blacklist', f'Successfully unblacklisted {channel.mention}')
-          await ctx.send(embed=embed)
-        else: 
-          tools.data['countblacklist'].append(channel.id)
-          with open('config.json', 'w') as f:
-            json.dump(tools.data, f, indent=4)
-          embed = tools.buildembed('Count Blacklist', f'{channel.mention} has been successfully blacklisted')
-          await ctx.send(embed=embed)
+      bchannels = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      if channel.id in bchannels:
+        tools.cursor.execute("DELETE FROM CountBlocklist WHERE Channel=?", (channel.id))
+        tools.db.commit()
+        embed = tools.buildembed('Count Blocklist', f'Successfully unblocklisted {channel.mention}')
+        await ctx.send(embed=embed)
+      else: 
+        tools.cursor.execute("INSERT INTO CountBlocklist(GuildID, Channel) VALUES(?, ?)", (ctx.guild.id, channel.id))
+        tools.db.commit()
+        embed = tools.buildembed('Count Blocklist', f'{channel.mention} has been successfully blocklisted')
+        await ctx.send(embed=embed)
     else:
-      embed = tools.buildembed('Count Blacklist', 'This command requires the manage channels permission')
-      await ctx.send(embed=embed)
+      embed = tools.buildembed('Count Blocklist', 'This command requires the manage channels permission')
+      await ctx.send(embed=embed)  
+  @blocklist.error
+  async def sendcmd_handler(self, ctx, error):
+    if isinstance(error, commands.ChannelNotFound) or isinstance(error, commands.MissingRequiredArgument):
+      embed = tools.buildembed('Count Blocklist', 'Channel could not be found')
+      await ctx.channel.send(embed=embed)
     
   @commands.command()
   async def say(self, ctx, *, message = None):
