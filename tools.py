@@ -29,13 +29,13 @@ from discord.ext import commands
 from discord.ext.commands import bot
 
 # XP Queue Initialization
-pending = {}
-async def queueinit():
-  guilds = bot.guilds
-  pending = {}
-  for guild in guilds:
-    pending[guild.id] = {}
-queueinit()
+# pending = {}
+# async def queueinit():
+#   guilds = bot.guilds
+#   pending = {}
+#   for guild in guilds:
+#     pending[guild.id] = {}
+# queueinit()
 
 # DATABASE STUFF
 

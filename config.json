@@ -1,13 +1,21 @@
 {
-    "token": "",
+    "token": "NTU1OTA1NDY5ODUyNjgwMjAy.XIrtUA.IdeH16oA14lowqk-LZ8zlfSKuv0",
     "owner": 291353858301624320,
     "prefixes": [
-        "."
+        ".test ",
+        "~"
     ],
-    "wordfilter": false,
-    "bannedwords": [],
-    "logchannel": 1,
+    "wordfilter": true,
+    "bannedwords": [
+        "faggot",
+        "nigger",
+        "nigga",
+        "tranny",
+        "retard"
+    ],
+    "logchannel": 533433993555738630,
     "countblacklist": [],
-    "deletedmessageschannel": 1,
-    "mute": 1
+    "deletedmessageschannel": 555914792939028481,
+    "mute": 595837823370657804,
+    "mafiarole": 817236245439971369
 }

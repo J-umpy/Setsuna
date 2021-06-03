@@ -71,6 +71,7 @@ class Administration(commands.Cog):
         if number > 99:
           number = 99
         channel = await tools.read("Log", "Clear", ctx.guild.id)
+        channel = channel[0]
         if member == None:
           await ctx.channel.purge(limit=(int(number)+1))
           if channel != 0:
@@ -94,6 +95,7 @@ class Administration(commands.Cog):
         await ctx.send("You forgot to input a reason!")
       else:
         role = await tools.read("GuildConfig", "TimeOutRole", ctx.guild.id)
+        role = role[0]
         if role == 0:
           embed = tools.buildembed("Timeout", "Choose a role to assign to users who are timed out")
           await ctx.send(embed=embed)
@@ -115,6 +117,7 @@ class Administration(commands.Cog):
         role = ctx.guild.get_role(role)
         await member.add_roles(role, reason=reason)
         channel = await tools.read("Log", "Timeout", ctx.guild.id)
+        channel = channel[0]
         channel = self.bot.get_channel(channel)
         embed = tools.buildembed("Timeout", f"{str(member)} is taking some time away from the chat with reason: {reason}")
         await channel.send(embed=embed)
@@ -142,7 +145,7 @@ class Administration(commands.Cog):
       if any(word in message.content.lower() for word in bwords):
         await message.delete()
         channel = await tools.read("Log", "WordFilter", message.guild.id)
-        channel = self.bot.get_channel(channel)
+        channel = self.bot.get_channel(channel[0])
         embed = tools.buildembed(f"{message.author} used a banned word", f"in {message.channel.mention}\n Full message: ||{message.content}||")
         await channel.send(embed=embed)
         await message.channel.send(f"{message.author.mention} don't say that word! This is a warning.")

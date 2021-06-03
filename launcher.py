@@ -40,7 +40,7 @@ async def on_ready():
 
   @bot.check
   async def check_commands(ctx):
-    bchannels = tools.read("CommandBlocklist", "Channel", ctx.guild.id)
+    bchannels = await tools.read("CommandBlocklist", "Channel", ctx.guild.id)
     return not ctx.channel.id in bchannels
 
 @bot.event

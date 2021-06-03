@@ -215,6 +215,7 @@ class Utility(commands.Cog):
   async def on_message_delete(self, deleted_message):
     if not deleted_message.author.bot:
       log = await tools.read('Log', 'DelMsg', deleted_message.guild.id)
+      log = log[0]
       if log != 0:
         log = self.bot.get_channel(log)
         channel = self.bot.get_channel(deleted_message.channel_id)
@@ -229,6 +230,7 @@ class Utility(commands.Cog):
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
     channel = await tools.read('Log', 'Ban', guild.id)
+    channel = channel[0]
     if channel != 0:
       ban = await guild.fetch_ban(user)
       embed = tools.buildembed("Member banned", f"{str(user)} was banned from {guild}", discord.Colour.red())
@@ -238,6 +240,7 @@ class Utility(commands.Cog):
   @commands.Cog.listener()
   async def on_member_kick(self, guild, user):
     channel = await tools.read('Log', 'Kick', guild.id)
+    channel = channel[0]
     if channel != 0:
       embed = tools.buildembed("Member kicked", f"{str(user)} was kicked from {guild}", discord.Colour.red())
       channel = self.bot.get_channel(channel)
