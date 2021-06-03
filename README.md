@@ -6,7 +6,7 @@ Setsuna is a general-purpose Discord Bot, and one of the few made in discord.py!
 ## Setup
 - Download and extract the source code
 - Open launcher.py in a Python 3.8+ interpreter
-- Enter your bot's token and YOUR Discord ID into config.json (make sure the bot token is in quotes, and the ID isn't!)
+- Enter your bot's token into config.json
 - .exe coming soon!
 ## Plans
 - Overhaul the remaining legacy code to use more efficient converters
