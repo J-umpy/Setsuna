@@ -215,22 +215,22 @@ class Utility(commands.Cog):
   async def on_message_delete(self, deleted_message):
     if not deleted_message.author.bot:
       log = await tools.read('Log', 'DelMsg', deleted_message.guild.id)
-      log = log[0]
+      log = log[0][0]
       if log != 0:
         log = self.bot.get_channel(log)
-        channel = self.bot.get_channel(deleted_message.channel_id)
+        channel = self.bot.get_channel(deleted_message.channel.id)
         embed = tools.buildembed('Message Deleted', f'in {channel.mention}', discord.Colour.red())
-        embed.add_field(name='Message ID', value=deleted_message.message_id)
-        embed.add_field(name='Message Author', value=deleted_message.author)
-        embed.add_field(name='Message Author Nickname', value=deleted_message.author.display_name)
-        embed.add_field(name='Message Author Mention (If Available)', value=deleted_message.author.mention)
+        embed.add_field(name='Message ID', value=deleted_message.id)
+        embed.add_field(name='Message Author', value=deleted_message.author, inline=False)
+        embed.add_field(name='Author Nickname', value=deleted_message.author.display_name)
+        embed.add_field(name='Author Mention', value=deleted_message.author.mention)
         embed.add_field(name='Messasge Content', value=deleted_message.content, inline=False)
         await log.send(embed=embed)
       
   @commands.Cog.listener()
   async def on_member_ban(self, guild, user):
     channel = await tools.read('Log', 'Ban', guild.id)
-    channel = channel[0]
+    channel = channel[0][0]
     if channel != 0:
       ban = await guild.fetch_ban(user)
       embed = tools.buildembed("Member banned", f"{str(user)} was banned from {guild}", discord.Colour.red())
@@ -240,7 +240,7 @@ class Utility(commands.Cog):
   @commands.Cog.listener()
   async def on_member_kick(self, guild, user):
     channel = await tools.read('Log', 'Kick', guild.id)
-    channel = channel[0]
+    channel = channel[0][0]
     if channel != 0:
       embed = tools.buildembed("Member kicked", f"{str(user)} was kicked from {guild}", discord.Colour.red())
       channel = self.bot.get_channel(channel)

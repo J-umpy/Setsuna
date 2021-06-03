@@ -41,7 +41,8 @@ async def on_ready():
   @bot.check
   async def check_commands(ctx):
     bchannels = await tools.read("CommandBlocklist", "Channel", ctx.guild.id)
-    return not ctx.channel.id in bchannels
+    bchannel = [''.join(i) for i in bchannels]
+    return not ctx.channel.id in bchannel
 
 @bot.event
 async def on_guild_join(guild):

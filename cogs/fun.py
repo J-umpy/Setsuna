@@ -68,7 +68,8 @@ class Fun(commands.Cog):
   @commands.group(aliases=['countinggame', 'counting'])
   async def count(self, ctx):
     if ctx.invoked_subcommand == None:
-      bchannels = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      bchannel = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      bchannels = [''.join(i) for i in bchannel]
       if not ctx.channel.id in bchannels or ctx.message.author.guild_permissions.manage_messages == True:
         num = random.randint(1, 1000)
         await ctx.send(f'The Counting Game has begun! Start counting up!\n{num-1}')
@@ -111,7 +112,8 @@ class Fun(commands.Cog):
   @count.command(aliases=['bl'])
   async def blocklist(self, ctx, channel: discord.TextChannel):
     if ctx.author.guild_permissions.manage_channels == True:
-      bchannels = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      bchannel = await tools.read("CountBlocklist", "Channel", ctx.guild.id)
+      bchannels = [''.join(i) for i in bchannel]
       if channel.id in bchannels:
         tools.cursor.execute("DELETE FROM CountBlocklist WHERE Channel=?", (channel.id))
         tools.db.commit()

@@ -88,13 +88,14 @@ class Settings(commands.Cog):
             embed = tools.buildembed("Word Filter", f"{word} has been successfully removed")
             await ctx.send(embed=embed)
         elif payload.lower() == 'list':
-          bwords = await tools.read("WordFilter", "Word", ctx.guild.id)
+          bword = await tools.read("WordFilter", "Word", ctx.guild.id)
           embed = tools.buildembed("List of Banned Words/Phrases", "Items are inside of spoiler tags")
-          for i in bwords:
-            embed.add_field(name=f"||{i}||")
+          for i in bword:
+            embed.add_field(name=f"Word", value=f"||{i[0]}||", inline=False)
           await ctx.send(embed=embed)
         elif payload.lower() == 'add':
-          bwords = await tools.read("WordFilter", "Word", ctx.guild.id)
+          bword = await tools.read("WordFilter", "Word", ctx.guild.id)
+          bwords = [''.join(i) for i in bword]
           if len(bwords) < 11:
             if not word == None:
               if len(word) < 257:
@@ -172,7 +173,7 @@ class Settings(commands.Cog):
         embed.add_field(name="When a member is banned from this server", value=f"ban")
         embed.add_field(name="When a member is kicked from this server", value=f"kick")
         embed.add_field(name="When a member is assigned the time out role", value=f"timeout")
-        embed.add_field(name="When a member uses a banned word", value="wordfilter")
+        embed.add_field(name="When a member uses a banned word", value="wordf")
         await ctx.send(embed=embed)
   #Changes the log channel
   @log.command(aliases=['delmsg'])
@@ -255,8 +256,8 @@ class Settings(commands.Cog):
     else:
       embed = tools.buildembed("Log", "This command requires the manage channels permission")
       await ctx.send(embed=embed)
-  @log.command(aliases=['wf'])
-  async def wordfilter(self, ctx, payload=None):
+  @log.command(aliases=['wfilter'])
+  async def wordf(self, ctx, payload=None):
     if ctx.author.guild_permissions.manage_channels == True:
       try:
         payload = await TextChannelConverter().convert(ctx, str(payload))
@@ -288,7 +289,8 @@ class Settings(commands.Cog):
   @commands.command(aliases= ['bl', 'cbl', 'commandblocklist'])
   async def blocklist(self, ctx, channel: discord.TextChannel):
     if ctx.author.guild_permissions.manage_channels == True:
-      bchannels = await tools.read("CommandBlocklist", "Channel", ctx.guild.id)
+      bchannel = await tools.read("CommandBlocklist", "Channel", ctx.guild.id)
+      bchannels = [''.join(i) for i in bchannel]
       if channel.id in bchannels:
         tools.cursor.execute("DELETE FROM CommandBlocklist WHERE Channel=?", (channel.id))
         tools.db.commit()
