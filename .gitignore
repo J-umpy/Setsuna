@@ -1,0 +1,6 @@
+.venv/
+.vscode/
+setsuna.db
+config.json
+
+
