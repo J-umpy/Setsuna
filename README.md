@@ -14,7 +14,7 @@ Setsuna is a general-purpose Discord Bot, and one of the few made in discord.py!
 - Reaction Roles
 - Starboard
 # Support and Donations
-[Discord](https://discord.gg/calamari)
+[Discord](https://discord.gg/mB7H34Z)
 
 [Twitter](https://twitter.com/J_umpy)
 
